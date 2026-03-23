@@ -102,7 +102,7 @@ bash step6_automated_pipeline/run_pipeline.sh \
 | Shailja Dhanuka    | [@ShailjaDhanuka](https://github.com/ShailjaDhanuka) |
 | Sophia Turecki     | @sophiat1101                                         |
 | Shreya Balamurugan | @sbalamur02                                          |
-
+| Wanyue Feng        | [@aquatique-plus](https://github.com/aquatique-plus)
 ---
 
 ## Course Project
