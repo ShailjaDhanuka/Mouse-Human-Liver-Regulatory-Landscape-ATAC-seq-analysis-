@@ -105,7 +105,7 @@ bash step6_automated_pipeline/run_pipeline.sh \
 
 ---
 
-## Course
+## Course Project
 
 **03-713: Bioinformatics Data Integration Practicum**
 Carnegie Mellon University — Spring 2026
