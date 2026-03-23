@@ -100,7 +100,7 @@ bash step6_automated_pipeline/run_pipeline.sh \
 | Name               | GitHub                                               |
 |--------------------|------------------------------------------------------|
 | Shailja Dhanuka    | [@ShailjaDhanuka](https://github.com/ShailjaDhanuka) |
-| Sophia Turecki     | @sophiat1101                                         |
+| Sophia      | @sophiat1101                                         |
 | Shreya Balamurugan | @sbalamur02                                          |
 
 ---
