@@ -15,6 +15,8 @@
 #   <unique_human_mouse_closed> \
 #   <mouse_only_no_ortho> \
 #   <human_only_no_ortho> \
+#   <human_genome> \
+#   <mouse_genome> \
 #   <output_dir>
 
 MOUSE_ATAC="$1"
@@ -25,19 +27,21 @@ UNIQUE_MOUSE_HUMAN_CLOSED="$5"
 UNIQUE_HUMAN_MOUSE_CLOSED="$6"
 MOUSE_NO_HUMAN="$7"
 HUMAN_NO_MOUSE="$8"
-OUT_DIR="$9"
+HUMAN_GENOME="${9}"
+MOUSE_GENOME="${10}"
+OUT_DIR="${11}"
 
-module load homer
+module load homer/4.11.0
 module load bedtools
 
-# checking that all input parameters were entered
-if [[ $# -ne 9 ]]; then
+# checking that all input files specified
+if [[ $# -ne 11 ]]; then
   echo "Usage: $0 <mouse_atac> <human_atac> <mouse_shared_human_coords> <human_shared_mouse_coords> <unique_mouse_human_closed> \
-  <unique_human_mouse_closed> <mouse_no_human> <human_no_mouse> <output_dir>"
+  <unique_human_mouse_closed> <mouse_no_human> <human_no_mouse> <human_genome> <mouse_genome> <output_dir>"
   exit 1
 fi
 
-# checking that all files contain data 
+# checking for any empty input files
 for f in "$MOUSE_ATAC" "$HUMAN_ATAC" "$MOUSE_SHARED_HUMAN_COORDS" "$HUMAN_SHARED_MOUSE_COORDS" \
 "$UNIQUE_MOUSE_HUMAN_CLOSED" "$UNIQUE_HUMAN_MOUSE_CLOSED" "$MOUSE_NO_HUMAN" "$HUMAN_NO_MOUSE"; do
   if [[ ! -s "$f" ]]; then
@@ -46,12 +50,12 @@ for f in "$MOUSE_ATAC" "$HUMAN_ATAC" "$MOUSE_SHARED_HUMAN_COORDS" "$HUMAN_SHARED
   fi
 done
 
-# making local directory to hold intermediate outputs and making output directory if doesn't exist yet
+# making local directories to hold input files and outputs during job
 mkdir -p $LOCAL/homerRun
+mkdir -p $LOCAL/homerRun/preparsed
 mkdir -p $OUT_DIR
 
-# copying files to local node for easy access during job run
-echo "Copying input files to local node.."
+echo "Copying input files (not genome files) to local node.."
 cp $MOUSE_ATAC $LOCAL/homerRun/mouse_atac
 cp $HUMAN_ATAC $LOCAL/homerRun/human_atac
 cp $MOUSE_SHARED_HUMAN_COORDS $LOCAL/homerRun/mouse_shared_human_coords
@@ -62,8 +66,7 @@ cp $MOUSE_NO_HUMAN $LOCAL/homerRun/mouse_no_human
 cp $HUMAN_NO_MOUSE $LOCAL/homerRun/human_no_mouse
 echo "Files copied to local node."
 
-# combining the files for open chromatin with closed orthologs or open chromatin with no orthologs for both species to get
-# one file of unique open chromatin each
+# combining the two open chromatin files that are unique to only one species
 echo "Combining open chromatin mapped to closed chromatin orthologs with open regions with no corresponding orthologs.."
 cat $LOCAL/homerRun/unique_mouse_human_closed \
     $LOCAL/homerRun/mouse_no_human \
@@ -85,7 +88,6 @@ cd $LOCAL/homerRun
 check_annotation() {
     local file=$1
     local label=$2
-    # checking if file is not empty after annotation
     if [[ $(wc -l < "$file") -le 1 ]]; then
         echo "ERROR: annotatePeaks.pl produced no results for $label ($file)"
         exit 1
@@ -101,22 +103,18 @@ split_peaks() {
     local prefix=$2
     local threshold=${3:-1000}
 
-    # splitting tab deliminated columns and checking if 10th col (distance to TSS) is less than 1000bp away from peak
     awk -F'\t' -v thresh="$threshold" \
         'NR>1 && ($10>=-thresh && $10<=thresh)' "$annotated" | \
         awk -F'\t' 'OFS="\t" {print $2, $3, $4}' > "${prefix}_promoter_peaks.bed"
 
-    # checking if promoters were found
     if [[ ! -s "${prefix}_promoter_peaks.bed" ]]; then
       echo "WARNING: No promoter peaks found for ${prefix}"
     fi
-    
-    # same - splitting tab deliminated columns but checking if 10th col (distance to TSS) is more than 1000bp away from peak
+
     awk -F'\t' -v thresh="$threshold" \
         'NR>1 && ($10<-thresh || $10>thresh)' "$annotated" | \
         awk -F'\t' 'OFS="\t" {print $2, $3, $4}' > "${prefix}_enhancer_peaks.bed"
 
-    # checking if enhancers were found
     if [[ ! -s "${prefix}_enhancer_peaks.bed" ]]; then
       echo "WARNING: No enhancer peaks found for ${prefix}"
     fi
@@ -125,14 +123,14 @@ split_peaks() {
 
 }
 
-# annotating mouse and human atac peaks with HOMER
+# annotating mouse and human atac peaks
 echo "Annotating peaks..."
-annotatePeaks.pl mouse_atac mm39 > annotated_mouse_peaks.txt
-annotatePeaks.pl human_atac hg38 > annotated_human_peaks.txt
-annotatePeaks.pl mouse_shared_human_coords hg38 > annotated_shared_human_peaks.txt
-annotatePeaks.pl human_shared_mouse_coords mm39 > annotated_shared_mouse_peaks.txt
-annotatePeaks.pl mouse_only mm39 > annotated_unique_mouse_peaks.txt
-annotatePeaks.pl human_only hg38 > annotated_unique_human_peaks.txt
+annotatePeaks.pl mouse_atac $MOUSE_GENOME > annotated_mouse_peaks.txt
+annotatePeaks.pl human_atac $HUMAN_GENOME > annotated_human_peaks.txt
+annotatePeaks.pl mouse_shared_human_coords $HUMAN_GENOME > annotated_shared_human_peaks.txt
+annotatePeaks.pl human_shared_mouse_coords $MOUSE_GENOME > annotated_shared_mouse_peaks.txt
+annotatePeaks.pl mouse_only $MOUSE_GENOME > annotated_unique_mouse_peaks.txt
+annotatePeaks.pl human_only $HUMAN_GENOME > annotated_unique_human_peaks.txt
 
 # checking annotations aren't empty before splitting peaks
 check_annotation annotated_mouse_peaks.txt "mouse_atac"
@@ -142,7 +140,6 @@ check_annotation annotated_shared_human_peaks.txt "shared_open_human"
 check_annotation annotated_unique_mouse_peaks.txt "unique_mouse"
 check_annotation annotated_unique_human_peaks.txt "unique_human"
 
-# splitting annotated peaks into promoters or enhancers with HOMER
 echo "Splitting peaks into promoters and enhancers.."
 split_peaks annotated_mouse_peaks.txt mouse 1000
 split_peaks annotated_human_peaks.txt human 1000
@@ -151,12 +148,10 @@ split_peaks annotated_shared_human_peaks.txt shared_human 1000
 split_peaks annotated_unique_mouse_peaks.txt unique_mouse 1000
 split_peaks annotated_unique_human_peaks.txt unique_human 1000
 
-
-# moving onto HOMER motif enrichment analysis for all files made after splitting
 echo "Running motif enrichment.."
 
 # looping over each prefix of files to do motif analysis
-for prefix in mouse human shared_mouse shared_human unique_mouse unique_human; do 
+for prefix in mouse human shared_mouse shared_human unique_mouse unique_human; do
 
   # fail safe -- if bed file is empty, skipping motif analysis
   for type in promoter enhancer; do
@@ -166,18 +161,18 @@ for prefix in mouse human shared_mouse shared_human unique_mouse unique_human; d
       continue
     fi
 
-    # getting right genome code
-    if [[ $prefix == "human" || $prefix == "shared_human" || $prefix == "unique_human"]]; then
-        genome=hg38
+    if [[ $prefix == "human" || $prefix == "shared_human" || $prefix == "unique_human" ]]; then
+        genome=$HUMAN_GENOME
     else
-        genome=mm39
+        genome=$MOUSE_GENOME
     fi
 
     # calling motif enrichment function in homer centered 200bp around peak summits
     # masking repetitive/low complexity sequences
     findMotifsGenome.pl "$bed" $genome \
         $OUT_DIR/${prefix}_${type}_motifs/ \
-        -size 200 -mask
+        -size 200 -mask \
+        -preparsedDir $LOCAL/homerRun/preparsed
 
   done
 done
