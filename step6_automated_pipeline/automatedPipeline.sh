@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=liver_pipeline
+#SBATCH --job-name=reg_conservation
 #SBATCH -p RM-shared
-#SBATCH -t 15:00:00
+#SBATCH -t 20:00:00
 #SBATCH --mem=12000M
 #SBATCH --cpus-per-task=6
 
