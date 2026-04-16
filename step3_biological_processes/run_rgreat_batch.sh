@@ -5,27 +5,37 @@
 #SBATCH --ntasks=4
 #SBATCH --cpus-per-task=8
 #SBATCH -A bio230007p
-#SBATCH --mem=16G                         
-#SBATCH --output=/ocean/projects/bio230007p/sdhanuka/rgreat_6files.log
-#SBATCH --error=/ocean/projects/bio230007p/sdhanuka/rgreat_6files.err
+#SBATCH --mem=16G
 
-unset CONDA_PKGS_DIRS
-source /jet/home/sdhanuka/miniconda3/etc/profile.d/conda.sh
-conda activate /ocean/projects/bio230007p/sdhanuka/conda_envs/rgreat_env
+module load anaconda3
 
-# change this to wherever your 6 bedtools output files are
-INDIR="/ocean/projects/bio230007p/wanyuef/project/open_chrom_result"
-OUTDIR="/ocean/projects/bio230007p/sdhanuka/gene_ontology/batch_GO"
+unset CONDA_PKGS>DIRS
+source "$(dirname "$0")/../config.sh"
+source "$RGREAT_CONDA_SOURCE"
+conda activate "$RGREAT_ENV"
+
+export RGREAT_LIBPATH
+
+# USAGE
+# sbatch run_rgreat_batch.sh \
+#   <input directory with all 6 bed files from open chromatin identification> \
+#   <output directory>
+
+INDIR="$1"
+OUTDIR="$2"
 mkdir -p "$OUTDIR"
 
+export INDIR
+export OUTDIR
+
 Rscript - <<'EOF'
-.libPaths("/ocean/projects/bio230007p/sdhanuka/conda_envs/rgreat_env/lib/R/library")
+.libPaths(Sys.getenv("RGREAT_LIBPATH"))
 
 library(rGREAT)
 library(GenomicRanges)
 
-INDIR  <- Sys.getenv("INDIR",  "/ocean/projects/bio230007p/wanyuef/project/open_chrom_result")
-OUTDIR <- Sys.getenv("OUTDIR", "/ocean/projects/bio230007p/sdhanuka/gene_ontology/batch_GO")
+INDIR  <- Sys.getenv("INDIR")
+OUTDIR <- Sys.getenv("OUTDIR")
 
 # ── helper ────────────────────────────────────────────────────────────────
 read_bed_to_gr <- function(path) {

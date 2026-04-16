@@ -19,24 +19,15 @@ HUMAN_ATAC="$2"
 CACTUS_ALIGN="$3"
 OUT_DIR="$4"
 
-# NOTE! -- HALPER_DIR must be set to path of halLiftover-processing repo
-# example: export HALPER_DIR=/ocean/projects/bio23000p/USER/halLiftover-postprocessing
-
-if [[ -z "$HALPER_DIR" ]]; then
-      echo "Error: HALPER_DIR is not set in script." >&2
-      echo "Set it to path of halLiftover-postprocessing repo." >&2
-      echo "Ex. export HALPER_DIR=/path/to/halLiftover-postprocessing?" >&2
-      exit 1
-fi
-
-HALPER_SCRIPT="$HALPER_DIR/halper_map_peak_orthologs.sh"
-
-# NOTE! - must have hal environment installed from halLiftover-postprocessing instructions
-# or create env from this repo (ex. conda env create -f halEnv.yml)
+# NOTE! - must have hal environment installed and source in config (instructions in READ.ME)
 
 # loading in anaconda3 module and hal envs
 module load anaconda3
-conda activate hal
+source "$(dirname "$0")/../config.sh"
+export HALPER_DIR
+conda activate "$HAL_ENV"
+
+HALPER_SCRIPT="$HALPER_DIR/halper_map_peak_orthologs.sh"
 
 # making local node working directory for job run
 mkdir -p $LOCAL/mappingRun

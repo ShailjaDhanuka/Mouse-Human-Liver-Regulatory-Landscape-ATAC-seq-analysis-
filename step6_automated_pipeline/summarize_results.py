@@ -75,7 +75,9 @@ def get_top_go_terms(go_dir, n=5):
         "mouse_open_human_closed": "mouse_open_human_closed_GREAT_GO_BP.csv",
         "human_open_mouse_closed": "human_open_mouse_closed_GREAT_GO_BP.csv",
         "mouse_no_ortholog": "mouse_no_ortholog_GREAT_GO_BP.csv",
-        "human_no_ortholog": "human_no_ortholog_GREAT_GO_BP.csv"
+        "human_no_ortholog": "human_no_ortholog_GREAT_GO_BP.csv",
+        "mouse_allpeaks": "liver_mouse_GO_BP_allpeaks.csv",
+        "human_allpeaks": "liver_human_GO_BP_allpeaks.csv"
     }
 
     for label, filename in files.items():
@@ -148,14 +150,8 @@ def plot_peak_counts(counts, output_dir):
 
     # add the count number on top of each bar
     for bar, val in zip(bars, values):
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,
-            bar.get_height() + 200,
-            str(val),
-            ha="center",
-            va="bottom",
-            fontsize=9
-        )
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 200, str(val),
+            ha="center", va="bottom", fontsize=9)
 
     # manually add legend since bars of same color share a label
     bars[0].set_label("shared peaks")
@@ -203,7 +199,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, output_dir):
 
     with open(summary_path, "w") as f:
 
-        f.write("pipeline summary - comparative liver open chromatin analysis\n")
+        f.write("pipeline summary - comparative open chromatin analysis\n")
         f.write("-" * 60 + "\n\n")
 
         # section 1 - peak counts
@@ -243,8 +239,8 @@ def write_summary(counts, pe_counts, go_results, motif_results, output_dir):
         f.write("mouse peaks with no ortholog: " + str(mouse_no_ortho) + "\n")
         f.write("human peaks with no ortholog: " + str(human_no_ortho) + "\n\n")
 
-        # section 2 - GO terms
-        f.write("2. top enriched biological processes (rGREAT GO:BP)\n")
+        # section 2 - GO terms (categorized peaks)
+        f.write("2. top enriched biological processes - categorized peaks (rGREAT GO:BP)\n")
         f.write("-" * 60 + "\n\n")
 
         go_labels = {
@@ -257,6 +253,28 @@ def write_summary(counts, pe_counts, go_results, motif_results, output_dir):
         }
 
         for key, label in go_labels.items():
+            f.write(label + "\n")
+            df = go_results.get(key, pd.DataFrame())
+            if df is not None and not df.empty:
+                for _, row in df.iterrows():
+                    desc = str(row["description"])[:45]
+                    f.write("  " + row["id"] + "  " + desc +
+                            "  fold=" + str(round(row["fold_enrichment"], 2)) +
+                            "  p_adj=" + str(row["p_adjust"]) + "\n")
+            else:
+                f.write("  no significant GO terms found (p_adjust > 0.05)\n")
+            f.write("\n")
+
+        # section 2b - GO terms (full raw peak sets)
+        f.write("2b. top enriched biological processes - all peaks (rGREAT GO:BP)\n")
+        f.write("-" * 60 + "\n\n")
+
+        allpeaks_labels = {
+            "mouse_allpeaks": "all mouse ATAC peaks",
+            "human_allpeaks": "all human ATAC peaks"
+        }
+
+        for key, label in allpeaks_labels.items():
             f.write(label + "\n")
             df = go_results.get(key, pd.DataFrame())
             if df is not None and not df.empty:

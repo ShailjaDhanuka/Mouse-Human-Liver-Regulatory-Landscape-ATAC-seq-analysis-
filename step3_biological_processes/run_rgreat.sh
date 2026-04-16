@@ -4,46 +4,54 @@
 #SBATCH --time=02:00:00
 #SBATCH --ntasks=4
 #SBATCH -A bio230007p
-#SBATCH --output=/ocean/projects/bio230007p/sdhanuka/rgreat.log
-#SBATCH --error=/ocean/projects/bio230007p/sdhanuka/rgreat.err
 
+module load anaconda3
 
-
-#this is where  the script to execute rgreat is (i ran it from my /ocean/projects/bio230007p/sdhanuka/ as a batch script)
 unset CONDA_PKGS_DIRS
-source /jet/home/sdhanuka/miniconda3/etc/profile.d/conda.sh
-conda activate /ocean/projects/bio230007p/sdhanuka/conda_envs/rgreat_env
+source "$(dirname "$0")/../config.sh"
+source "$RGREAT_CONDA_SOURCE"
+conda activate "$RGREAT_ENV"
+
+export RGREAT_LIBPATH
+
+MOUSE_ATAC="$1"
+HUMAN_ATAC="$2"
+OUTPUT_DIR="$3"
+
+export MOUSE_ATAC
+export HUMAN_ATAC
+export OUTPUT_DIR
 
 Rscript - <<'EOF'
-.libPaths("/ocean/projects/bio230007p/sdhanuka/conda_envs/rgreat_env/lib/R/library")
+.libPaths(Sys.getenv("RGREAT_LIBPATH"))
 
 library(rGREAT)
+library(GenomicRanges)
 
-# # ---- HUMAN ----
-# cat("Running GREAT on human peaks...\n")
-# human_peaks <- read.table(
-#   gzfile("/ocean/projects/bio230007p/ikaplow/HumanAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz"),
-#   header = FALSE,
-#   col.names = c("chr","start","end","name","score","strand",
-#                 "fold_enrichment","pval","qval","summit")
-# )
+#  ---- HUMAN ----
+cat("Running GREAT on human peaks...\n")
+human_peaks <- read.table(
+  gzfile(Sys.getenv("HUMAN_ATAC")),
+  header = FALSE,
+  col.names = c("chr","start","end","name","score","strand",
+                 "fold_enrichment","pval","qval","summit")
+ )
 
-# human_gr <- GRanges(
-#   seqnames = human_peaks$chr,
-#   ranges   = IRanges(start = human_peaks$start, end = human_peaks$end)
-# )
+human_gr <- GRanges(
+  seqnames = human_peaks$chr,
+  ranges   = IRanges(start = human_peaks$start, end = human_peaks$end)
+ )
 
-# human_res <- great(human_gr, "GO:BP", "hg38")
-# human_go  <- getEnrichmentTable(human_res)
-# write.csv(human_go,
-#   "/ocean/projects/bio230007p/sdhanuka/gene_ontology/liver_human_GO_BP_allpeaks.csv",
-#   row.names = FALSE)
-# cat("Human done!\n")
+human_res <- great(human_gr, "GO:BP", "hg38")
+human_go  <- getEnrichmentTable(human_res)
+write.csv(human_go,
+  file.path(Sys.getenv("OUTPUT_DIR"), "liver_human_GO_BP_allpeaks.csv"), row.names = FALSE)
+cat("Human done!\n")
 
 # ---- MOUSE ----
 cat("Running GREAT on mouse peaks...\n")
 mouse_peaks <- read.table(
-  gzfile("/ocean/projects/bio230007p/ikaplow/MouseAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz"),
+  gzfile(Sys.getenv("MOUSE_ATAC")),
   header = FALSE,
   col.names = c("chr","start","end","name","score","strand",
                 "fold_enrichment","pval","qval","summit")
@@ -57,7 +65,7 @@ mouse_gr <- GRanges(
 mouse_res <- great(mouse_gr, "GO:BP", "mm10")
 mouse_go  <- getEnrichmentTable(mouse_res)
 write.csv(mouse_go,
-  "/ocean/projects/bio230007p/sdhanuka/gene_ontology/liver_mouse_GO_BP_allpeaks.csv",
+  file.path(Sys.getenv("OUTPUT_DIR"), "liver_mouse_GO_BP_allpeaks.csv"),
   row.names = FALSE)
 cat("Mouse done!\n")
 

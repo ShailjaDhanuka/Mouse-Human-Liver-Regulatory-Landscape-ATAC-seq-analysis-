@@ -6,7 +6,7 @@
 #SBATCH --cpus-per-task=4
 #SBATCH --time=07:00:00
 
-#Usage: enhancer_vs_promoter.sh \
+#Usage: bash (or sbatch) enhancer_vs_promoter.sh \
 #   <mouse_atac> \
 #   <human_atac> \
 #   <mouse_peaks_shared_human> \
@@ -26,8 +26,10 @@ HUMAN_NO_MOUSE="$6"
 OUT_DIR="$7"
 
 module load anaconda3
-conda activate homer_env
 module load bedtools
+
+source "$(dirname "$0")/../config.sh"
+conda activate "$HOMER_ENV"
 
 # checking that all input files are correct / non-empty
 if [[ $# -ne 7 ]]; then
@@ -161,4 +163,4 @@ for prefix in shared_mouse shared_human unique_mouse unique_human; do
   done
 done
 
-echo "Done! Results in $OUT_DIR"
+echo "HOMER done! Results in $OUT_DIR"
