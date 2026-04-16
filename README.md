@@ -41,7 +41,7 @@ Quality assessment outputs for ATAC-seq data sets considered for creation of thi
 ### Step 2 — Cross-Species Mapping
 Map open chromatin regions between human and mouse genomes using halLiftover and HALPER. Classify regions as shared (ortholog is open in the other species) or species-specific (ortholog is closed).
 
-**Tools:** [halLifover](https://github.com/ComparativeGenomicsToolkit/hal), [HALPER](https://github.com/pfenninglab/halLiftover-postprocessing), [bedtools](https://bedtools.readthedocs.io/en/latest/)
+**Tools:** [halLiftover](https://github.com/ComparativeGenomicsToolkit/hal), [HALPER](https://github.com/pfenninglab/halLiftover-postprocessing), [bedtools](https://bedtools.readthedocs.io/en/latest/)
 
 ---
 
@@ -74,19 +74,23 @@ bash step6_automated_pipeline/automatedPipeline.sh \
     <mouse_atac_peaks> \
     <human_atac_peaks> \
     <cactusAlignment> \
-    <output_directory> 
+    <output_directory> \
+    <output_dir> \
+    [--start-step <n>]
+    [--end-step <n>]
+    [--skip <n,n..>]
 ```
-
 ---
 
 ## Tools & References
 
-| Tool                                                                 | Purpose                                                   | Links |
-|----------------------------------------------------------------------|-----------------------------------------------------------|-------|
-| halLiftover and HALPER - Pfenning Lab's halper_map_peak_orthologs.sh | Cross-species liftover and Optimal Ortholog Identification | [GitHub](https://github.com/pfenninglab/halLiftover-postprocessing) · [Paper](https://pubmed.ncbi.nlm.nih.gov/32407523/) |
-| bedtools                                                             | Genomic interval operations                               | [Docs](https://bedtools.readthedocs.io/en/latest/) · [Paper](https://pubmed.ncbi.nlm.nih.gov/20110278/) |
-| rGREAT                                                               | GO enrichment for genomic regions                         | [GitHub](https://github.com/jokergoo/rGREAT) · [Paper](https://pubmed.ncbi.nlm.nih.gov/36394265/) |
-| HOMER                                                                | Peak annotation and motif discovery                       | [Docs](http://homer.ucsd.edu/homer/) · [Paper](https://pubmed.ncbi.nlm.nih.gov/20513432/) |
+| Tool          | Purpose                                                      | Links                                                                                                                                              |
+|---------------|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| halLiftover   | Cross-species genomic mapping                                | [halLiftover GitHub](https://github.com/ComparativeGenomicsToolkit/hal)  |
+| HALPER | halLiftover processing for contiguous orthologs construction | [HALPER Github](https://github.com/pfenninglab/halLiftover-postprocessing)
+| bedtools      | Genomic interval operations                                  | [Docs](https://bedtools.readthedocs.io/en/latest/) · [Paper](https://pubmed.ncbi.nlm.nih.gov/20110278/)                                            |
+| rGREAT        | GO enrichment for genomic regions                            | [GitHub](https://github.com/jokergoo/rGREAT) · [Paper](https://pubmed.ncbi.nlm.nih.gov/36394265/)                                                  |
+| HOMER         | Peak annotation and motif discovery                          | [Docs](http://homer.ucsd.edu/homer/) · [Paper](https://pubmed.ncbi.nlm.nih.gov/20513432/)                                                          |
 
 ---
 

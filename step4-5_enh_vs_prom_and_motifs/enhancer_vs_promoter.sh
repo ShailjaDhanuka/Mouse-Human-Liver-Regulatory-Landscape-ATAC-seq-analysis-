@@ -25,10 +25,15 @@ MOUSE_NO_HUMAN="$5"
 HUMAN_NO_MOUSE="$6"
 OUT_DIR="$7"
 
-module load anaconda3
-module load bedtools
+# NOTE! - must have hal environment installed to run and source in config (instructions in READ.ME)
 
+# fail safe - checks if module exists as command in subshell made by scrip -- skips if it doesnt to prevent error
+command -v module &>/dev/null && module load anaconda3
+command -v module &>/dev/null && module load bedtools
+
+# directing conda source to correct file path
 source "$(dirname "$0")/../config.sh"
+source "$HOMER_CONDA_SOURCE"
 conda activate "$HOMER_ENV"
 
 # checking that all input files are correct / non-empty

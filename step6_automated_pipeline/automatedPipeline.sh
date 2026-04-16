@@ -1,4 +1,20 @@
 #!/bin/bash
+#SBATCH --job-name=liver_pipeline
+#SBATCH -p RM-shared
+#SBATCH -t 15:00:00
+#SBATCH --mem=12000M
+#SBATCH --cpus-per-task=6
+
+# This script MUST be submitted when using sbatch from within step6_automated_pipeline/ of repo.
+# SLURM_SUBMIT_DIR is set by SLURM to the submission directory, so the repo root is one level up
+REPO_DIR="$(cd "${SLURM_SUBMIT_DIR}/.." && pwd)"
+if [[ ! -f "$REPO_DIR/config.sh" || ! -d "$REPO_DIR/step2_cross_species_mapping" ]]; then
+    echo "ERROR: Could not find repo root at $REPO_DIR."
+    echo "  Make sure to submit within step6_automated_pipeline/automatedPipeline.sh"
+    echo "  from within the downloaded repo folder you made."
+    exit 1
+fi
+echo "Repo root: $REPO_DIR"
 
 # SET FLAGS
 # Stop the pipeline if any command fails, if an undefined variable is used,
@@ -15,8 +31,8 @@ set -E
 ## NOTES FOR USER
 # Please note that if you choose to skip steps, you will still need to input the mouse atac,
 # human atac, genome alignment file and output directory when calling this script
-# As well, ensure that input files for the step you wish to start at are in the propery directory
-# under your given output directory
+# As well, ensure that input files for the step you wish to start at are in the proper directory
+# under your given output directory. See structure of output directories below.
 
 ## STRUCTURE OF OUTPUT DIRECTORY
 # mkdir -p "$OUTPUT_DIR/logs"
@@ -28,55 +44,55 @@ set -E
 #                                                                         motif enrichment)
 # mkdir -p "$OUTPUT_DIR/summary"        # step 6 outputs go here  (python summary file)
 
-### SLURM job settings - tells PSC how much memory and time we need
-#SBATCH --job-name=liver_pipeline
-#SBATCH -p RM-shared
-#SBATCH -t 15:00:00
-#SBATCH --mem=12000M
-#SBATCH --cpus-per-task=6
-#SBATCH --output=logs/pipeline_%j.out
-#SBATCH --error=logs/pipeline_%j.err
-
 # ============================================================
 # HOW TO RUN
 # ============================================================
+# Usage: sbatch automatedPipeline.sh \
+#         <mouse_peaks> \
+#         <human_peaks> \
+#         <cactus_file> \
+#         <output_dir> \
+#         [--start-step <n>]
+#         [--end-step <n>]
+#         [--skip <n,n..>]
+
 # To run all steps:
 # sbatch automatedPipeline.sh \
-#     <mouse_peaks> <human_peaks> <cactus_file> <output_folder>
+#     <mouse_peaks> <human_peaks> <cactus_file> <output_dir>
 #
 # To run only steps 1 and 2:
 # sbatch automatedPipeline.sh \
-#     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
+#     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --end-step 2
 #
 # To skip step 3 (rGREAT):
 # sbatch automatedPipeline.sh \
-#     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
+#     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --skip 3
 #
 # To start from step 2 (ortholog mapping already done):
-#   NOTE: HALPER narrowPeak files must be in <output_folder>/mapping/
+#   NOTE: HALPER narrowPeak files must be in <output_dir>/mapping/
 # sbatch automatedPipeline.sh \
-#     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
+#     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 2
 #
 # To start from step 3 (bedtools already done):
-#   NOTE: BED files must be in <output_folder>/open_chrom/
+#   NOTE: BED files must be in <output_dir>/open_chrom/
 # sbatch automatedPipeline.sh \
-#     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
+#     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 3
 #
 # To start from step 4 (rGREAT already done):
-#   NOTE: BED files must be in <output_folder>/open_chrom/
+#   NOTE: BED files must be in <output_dir>/open_chrom/
 # sbatch automatedPipeline.sh \
-#     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
+#     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 4
 #
 # To start from step 6 (HOMER already done):
-#   NOTE: GO CSV files must be in <output_folder>/gene_ontology/
-#   AND HOMER result directories must be in <output_folder>/homer/
+#   NOTE: GO CSV files must be in <output_dir>/gene_ontology/
+#   AND HOMER result directories must be in <output_dir>/homer/
 # sbatch automatedPipeline.sh \
-#     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
+#     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 6
 
 # ============================================================
@@ -330,7 +346,7 @@ assert_valid_bed() {
 
 # print summary of what will run and what will be skipped
 echo "-------------------------------------------"
-echo "liver regulatory pipeline"
+echo "tissue regulatory pipeline"
 echo "-------------------------------------------"
 echo "mouse atac: $MOUSE_ATAC"
 echo "human atac: $HUMAN_ATAC"
@@ -339,7 +355,7 @@ echo ""
 
 # names for each step used in the run plan printout and stage log
 STEP_NAMES=("" 
-    "ortholog mapping (HALPER)"
+    "ortholog mapping (halLiftover and HALPER)"
     "shared/unique peaks (bedtools)"
     "gene ontology (rGREAT)"
     "enhancer/promoter classification (HOMER annotatePeaks)"
@@ -376,9 +392,9 @@ echo "-------------------------------------------"
 if should_run 1; then
 
     # update current step so the trap knows where we are if something fails
-    CURRENT_STEP="step 1 - ortholog mapping (HALPER)"
+    CURRENT_STEP="step 1 - ortholog mapping (halLiftover & HALPER)"
     echo ""
-    echo "--- step 1: ortholog mapping (HALPER) ---"
+    echo "--- step 1: ortholog mapping (halLiftover & HALPER) ---"
 
     # check all three input files exist before trying to run
     for f in "$MOUSE_ATAC" "$HUMAN_ATAC" "$CACTUS_FILE"; do
@@ -390,7 +406,7 @@ if should_run 1; then
 
     # run the HALPER mapping script in both directions
     # mouse to human and human to mouse
-    bash "$(dirname "$0")/../step2_cross_species_mapping/orthologMapping.sh" \
+    bash "$REPO_DIR/step2_cross_species_mapping/orthologMapping.sh" \
         "$MOUSE_ATAC" \
         "$HUMAN_ATAC" \
         "$CACTUS_FILE" \
@@ -440,7 +456,7 @@ if should_run 2; then
         "$OUTPUT_DIR/mapping/HumanAtacToMouseOrtho.HumanToMouse.HALPER.narrowPeak.gz"
 
     # run identification script to compare peaks and split into shared and unique categories
-    bash "$(dirname "$0")/../step2_cross_species_mapping/open_chromatin_finding_script.sh" \
+    bash "$REPO_DIR/step2_cross_species_mapping/open_chromatin_finding_script.sh" \
         "$OUTPUT_DIR/mapping/MouseAtacToHumanOrtho.MouseToHuman.HALPER.narrowPeak.gz" \
         "$OUTPUT_DIR/mapping/HumanAtacToMouseOrtho.HumanToMouse.HALPER.narrowPeak.gz" \
         "$MOUSE_ATAC" \
@@ -522,7 +538,7 @@ if should_run 3; then
         "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed"
 
     # run rGREAT on all 6 BED files to find enriched biological processes
-    bash "$(dirname "$0")/../step3_biological_processes/run_rgreat_batch.sh" \
+    bash "$REPO_DIR/step3_biological_processes/run_rgreat_batch.sh" \
         "$OUTPUT_DIR/open_chrom" \
         "$OUTPUT_DIR/gene_ontology"
 
@@ -537,7 +553,7 @@ if should_run 3; then
         "$OUTPUT_DIR/gene_ontology/human_no_ortholog_GREAT_GO_BP.csv"
 
     # run rGREAT on the full raw peak sets (all mouse and human ATAC peaks)
-    bash "$(dirname "$0")/../step3_biological_processes/run_rgreat.sh" \
+    bash "$REPO_DIR/step3_biological_processes/run_rgreat.sh" \
         "$MOUSE_ATAC" \
         "$HUMAN_ATAC" \
         "$OUTPUT_DIR/gene_ontology"
@@ -590,7 +606,7 @@ if should_run 4 || should_run 5; then
 
     # run HOMER to classify peaks as enhancers or promoters
     # and find enriched transcription factor motifs in each set
-    bash "$(dirname "$0")/../step4-5_enhancers_promoters_and_motif_analysis/enhancer_vs_promoter.sh" \
+    bash "$REPO_DIR/step4-5_enh_vs_prom_and_motifs/enhancer_vs_promoter.sh" \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
         "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
@@ -645,7 +661,7 @@ if should_run 6; then
 
     # run the python summary script which reads all results and
     # generates a text summary and bar charts
-    python "$(dirname "$0")/summarize_results.py" \
+    python "$REPO_DIR/step6_automated_pipeline/summarize_results.py" \
         --openChromDir "$OUTPUT_DIR/open_chrom" \
         --goDir        "$OUTPUT_DIR/gene_ontology" \
         --homerDir     "$OUTPUT_DIR/homer" \
