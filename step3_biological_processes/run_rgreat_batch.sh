@@ -7,8 +7,12 @@
 #SBATCH -A bio230007p
 #SBATCH --mem=16G
 
-module load anaconda3
+# NOTE! - must have conda environment with rgreat installed and sourced in config (instructions in READ.ME)
 
+# fail safe - checks if module exists as command in subshell made by scrip -- skips if it doesnt to prevent error
+command -v module &>/dev/null && module load anaconda3
+
+# directing conda source to correct file path
 unset CONDA_PKGS>DIRS
 source "$(dirname "$0")/../config.sh"
 source "$RGREAT_CONDA_SOURCE"

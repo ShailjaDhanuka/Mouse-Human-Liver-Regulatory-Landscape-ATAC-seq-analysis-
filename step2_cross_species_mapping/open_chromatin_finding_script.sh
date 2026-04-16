@@ -26,7 +26,8 @@ OUTDIR="$5"
 
 mkdir -p "$OUTDIR"
 
-module load bedtools
+# fail safe - checks if module exists as command in subshell made by scrip -- skips if it doesnt to prevent error
+command -v module &>/dev/null && module load bedtools
 
 # 1. prepare BED
 zcat "$MOUSE_TO_HUMAN_GZ" | sort -k1,1 -k2,2n > "$OUTDIR/mouse_to_human_orthologs.bed"
