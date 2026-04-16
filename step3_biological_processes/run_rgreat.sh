@@ -5,9 +5,9 @@
 #SBATCH --ntasks=4
 #SBATCH -A bio230007p
 
-# NOTE! - must have conda environment with rgreat installed and sourced in config (instructions in READ.ME)
+# NOTE! - must have conda environment with rgreat installed and sourced in config (instructions in README)
 
-# fail safe - checks if module exists as command in subshell made by scrip -- skips if it doesnt to prevent error
+# fail safe - checks if module exists as command in subshell made by script -- skips if it doesn't to prevent error
 command -v module &>/dev/null && module load anaconda3
 
 # directing conda source to correct file path

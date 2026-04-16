@@ -25,9 +25,9 @@ MOUSE_NO_HUMAN="$5"
 HUMAN_NO_MOUSE="$6"
 OUT_DIR="$7"
 
-# NOTE! - must have hal environment installed to run and source in config (instructions in READ.ME)
+# NOTE! - must have hal environment installed to run and source in config (instructions in README)
 
-# fail safe - checks if module exists as command in subshell made by scrip -- skips if it doesnt to prevent error
+# fail safe - checks if module exists as command in subshell made by script -- skips if it doesn't to prevent error
 command -v module &>/dev/null && module load anaconda3
 command -v module &>/dev/null && module load bedtools
 

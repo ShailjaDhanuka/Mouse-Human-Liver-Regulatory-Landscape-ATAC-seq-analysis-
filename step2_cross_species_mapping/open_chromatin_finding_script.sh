@@ -26,7 +26,7 @@ OUTDIR="$5"
 
 mkdir -p "$OUTDIR"
 
-# fail safe - checks if module exists as command in subshell made by scrip -- skips if it doesnt to prevent error
+# fail safe - checks if module exists as command in subshell made by script -- skips if it doesn't to prevent error
 command -v module &>/dev/null && module load bedtools
 
 # 1. prepare BED

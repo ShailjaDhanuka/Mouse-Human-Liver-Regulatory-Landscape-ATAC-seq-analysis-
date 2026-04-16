@@ -19,11 +19,11 @@ HUMAN_ATAC="$2"
 CACTUS_ALIGN="$3"
 OUT_DIR="$4"
 
-# NOTE! - must have hal environment installed and source in config (instructions in READ.ME)
+# NOTE! - must have hal environment installed and source in config (instructions in README)
 
 ## loading in anaconda3 module and hal envs
 
-# fail safe - checks if module exists as command in subshell made by scrip -- skips if it doesnt to prevent error
+# fail safe - checks if module exists as command in subshell made by script -- skips if it doesn't to prevent error
 command -v module &>/dev/null && module load anaconda3
 source "$(dirname "$0")/../config.sh"
 source "$HAL_CONDA_SOURCE"
