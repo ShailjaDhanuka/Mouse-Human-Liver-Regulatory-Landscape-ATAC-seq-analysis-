@@ -82,6 +82,19 @@ bash step6_automated_pipeline/automatedPipeline.sh \
 ```
 ---
 
+## Pipeline Instructions
+To begin using this pipeline, you will have to clone the repository into you desired folder.
+
+#### Dependencies and Installation Instructions
+Ensure all necessary dependencies and environments are installed/created.  Then update config.sh file with file paths to your conda source and specific environments. This includes:
+
+- halLiftover and HALPER (install in its own hal environment) - [Installation Instructions](https://github.com/pfenninglab/halLiftover-postprocessing/blob/master/hal_install_instructions.md)
+- rGreat (install in its own rGreat environment) - [Installation Instructions](https://github.com/jokergoo/rGREAT/blob/master/README.md)
+- HOMER (install in its own HOMER environment) - easiest to use bioconda to install (must have bioconda channel)
+  - ``conda install bioconda::homer``
+  - Further installation methods - [Installation Instructions](http://homer.ucsd.edu/homer/introduction/install.html)
+- bedtools -- [Installation Instructions](https://bedtools.readthedocs.io/en/latest/content/installation.html)
+
 ## Tools & References
 
 | Tool          | Purpose                                                      | Links                                                                                                                                              |
