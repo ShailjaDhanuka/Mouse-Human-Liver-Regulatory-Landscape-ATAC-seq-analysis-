@@ -23,8 +23,9 @@ This project investigates the conservation of transcriptional regulatory activit
 ├── step2_biological_processes/      ← Gene ontology enrichment (rGREAT)
 ├── step3-4_enh_vs_prom_and_motifs   ← Regulatory element classification + TF motif analysis (HOMER)
 ├── step5_automated_pipeline/        ← End-to-end automated pipeline
-├── scripts/                         ← Shared helper scripts
+├── READ.ME                          ← Pipeline Details
 ├── config.sh                        ← Configuration file 
+
 ```
 
 ---
