@@ -1,16 +1,34 @@
 #!/bin/bash
 
-# stop the pipeline if any command fails, if an undefined variable is used,
+# SET FLAGS
+# Stop the pipeline if any command fails, if an undefined variable is used,
 # or if a command inside a pipe fails
 set -euo pipefail
-# make sure the trap catches errors inside functions too
+# Make sure the trap catches errors inside functions too
 set -E
 
-# this pipeline compares open chromatin regions between human and mouse liver
-# it runs 6 steps in order: ortholog mapping, peak comparison, gene ontology,
-# enhancer/promoter classification, motif analysis, and a final summary
+## PIPELINE SUMMARY
+# This pipeline compares open chromatin regions between human and mouse tissue
+# It runs 6 steps in order: ortholog mapping, peak comparison to find shared and unique peaks,
+# gene ontology, enhancer/promoter classification, motif analysis, and a final summary
 
-# slurm job settings - tells bridges2 how much memory and time we need
+## NOTES FOR USER
+# Please note that if you choose to skip steps, you will still need to input the mouse atac,
+# human atac, genome alignment file and output directory when calling this script
+# As well, ensure that input files for the step you wish to start at are in the propery directory
+# under your given output directory
+
+## STRUCTURE OF OUTPUT DIRECTORY
+# mkdir -p "$OUTPUT_DIR/logs"
+# mkdir -p "$OUTPUT_DIR/mapping"        # step 1 outputs go here (mapped ortholog peaks)
+# mkdir -p "$OUTPUT_DIR/open_chrom"     # step 2 outputs go here (shared open / unique open with
+#                                                                ortholog closed / no mapped ortholog)
+# mkdir -p "$OUTPUT_DIR/gene_ontology"  # step 3 outputs go here (gene ontology files)
+# mkdir -p "$OUTPUT_DIR/homer"          # steps 4 and 5 outputs go here (enhancer peaks, promoter peaks
+#                                                                         motif enrichment)
+# mkdir -p "$OUTPUT_DIR/summary"        # step 6 outputs go here  (python summary file)
+
+### SLURM job settings - tells PSC how much memory and time we need
 #SBATCH --job-name=liver_pipeline
 #SBATCH -p RM-shared
 #SBATCH -t 15:00:00
@@ -22,39 +40,39 @@ set -E
 # ============================================================
 # HOW TO RUN
 # ============================================================
-# run all steps:
+# To run all steps:
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_folder>
 #
-# run only steps 1 and 2:
+# To run only steps 1 and 2:
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
 #     --end-step 2
 #
-# skip step 3 (rGREAT):
+# To skip step 3 (rGREAT):
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
 #     --skip 3
 #
-# start from step 2 (ortholog mapping already done):
+# To start from step 2 (ortholog mapping already done):
 #   NOTE: HALPER narrowPeak files must be in <output_folder>/mapping/
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
 #     --start-step 2
 #
-# start from step 3 (bedtools already done):
+# To start from step 3 (bedtools already done):
 #   NOTE: BED files must be in <output_folder>/open_chrom/
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
 #     --start-step 3
 #
-# start from step 4 (rGREAT already done):
+# To start from step 4 (rGREAT already done):
 #   NOTE: BED files must be in <output_folder>/open_chrom/
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_folder> \
 #     --start-step 4
 #
-# start from step 6 (HOMER already done):
+# To start from step 6 (HOMER already done):
 #   NOTE: GO CSV files must be in <output_folder>/gene_ontology/
 #   AND HOMER result directories must be in <output_folder>/homer/
 # sbatch automatedPipeline.sh \
@@ -65,7 +83,7 @@ set -E
 # CHECK INPUTS
 # ============================================================
 
-# make sure the user gave us at least 4 arguments
+# make sure user gave us at least 4 arguments
 # if not, print a help message and exit
 if [ "$#" -lt 4 ]; then
     echo "ERROR: Not enough arguments"
@@ -86,12 +104,12 @@ if [ "$#" -lt 4 ]; then
     exit 1
 fi
 
-# save each input argument as a named variable so they are easy to use later
+# variables for input file paths
 MOUSE_ATAC="$1"    # mouse atac-seq peaks file
 HUMAN_ATAC="$2"    # human atac-seq peaks file
 CACTUS_FILE="$3"   # cactus alignment hal file for cross-species mapping
 OUTPUT_DIR="$4"    # folder where all results will be saved
-shift 4            # move past the 4 required arguments so we can read optional flags
+shift 4            # move past the 4 required arguments to read optional flags
 
 # ============================================================
 # STEP CONTROL
@@ -103,7 +121,7 @@ END_STEP=6
 SKIP_STEPS=""
 
 # read any optional flags the user provided
-# loops through remaining arguments and reads --start-step, --end-step, --skip
+# loops through options from script call and reads --start-step, --end-step, --skip
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
         --start-step)
@@ -130,8 +148,7 @@ done
 # SETUP
 # ============================================================
 
-# create all output folders upfront so each step has somewhere to save results
-# -p means dont error if the folder already exists
+# create all output folders upfront if they don't already exist so each step has somewhere to save results
 mkdir -p "$OUTPUT_DIR/logs"
 mkdir -p "$OUTPUT_DIR/mapping"        # step 1 outputs go here
 mkdir -p "$OUTPUT_DIR/open_chrom"     # step 2 outputs go here
@@ -139,7 +156,7 @@ mkdir -p "$OUTPUT_DIR/gene_ontology"  # step 3 outputs go here
 mkdir -p "$OUTPUT_DIR/homer"          # steps 4 and 5 outputs go here
 mkdir -p "$OUTPUT_DIR/summary"        # step 6 outputs go here
 
-# path to the stage log file - tracks which steps passed, failed or were skipped
+# making path to the stage log file - tracks which steps passed, failed or were skipped
 STAGE_LOG="$OUTPUT_DIR/summary/stage_log.txt"
 
 # write pipeline run info to the stage log
@@ -150,7 +167,7 @@ echo "Cactus file: $CACTUS_FILE" >> "$STAGE_LOG"
 echo "Output dir:  $OUTPUT_DIR"  >> "$STAGE_LOG"
 echo ""                          >> "$STAGE_LOG"
 
-# load the tools we need on bridges2
+# load the tools needed on PSC
 module load anaconda3
 module load bedtools
 
@@ -158,13 +175,13 @@ module load bedtools
 # TRAP
 # ============================================================
 
-# this variable tracks which step we are currently running
-# it gets updated before each step so if the pipeline crashes
+# This variable tracks which step we are currently running
+# It gets updated before each step so if the pipeline crashes
 # we know exactly where it failed
 CURRENT_STEP="starting up"
 
-# this function runs automatically if the pipeline crashes
-# it prints where the failure happened, lists any files saved
+# This function runs automatically if the pipeline crashes
+# It prints where the failure happened, lists any files saved
 # so far, and tells the user how to resume from where it stopped
 cleanup_on_error() {
     local exit_code=$?
@@ -187,9 +204,9 @@ cleanup_on_error() {
     echo "failed at: $(date)" >> "$STAGE_LOG"
 
     echo ""
-    echo "to resume, run:"
+    echo "To resume, run:"
     echo "  sbatch automatedPipeline.sh $MOUSE_ATAC $HUMAN_ATAC $CACTUS_FILE $OUTPUT_DIR --start-step $START_STEP"
-    echo "see README for required files per step"
+    echo "See README for required files per step"
 }
 
 # register the trap - cleanup_on_error will run automatically if any command fails
@@ -199,8 +216,8 @@ trap cleanup_on_error ERR
 # HELPER FUNCTIONS
 # ============================================================
 
-# returns true if a step should run, false if it should be skipped
-# checks start step, end step, and skip list
+# Returns true if a step should run, false if it should be skipped
+# Checks start step, end step, and skip list
 should_run() {
     local step=$1
 
@@ -223,7 +240,7 @@ should_run() {
     return 0
 }
 
-# writes a line to the stage log recording whether a step passed,
+# Writes a line to the stage log recording whether a step passed,
 # failed, or was skipped, along with the current timestamp
 log_stage() {
     local step="$1"
@@ -232,11 +249,11 @@ log_stage() {
     echo "[$status] Step $step: $message ($(date))" >> "$STAGE_LOG"
 }
 
-# checks that a list of output files exist and are not empty
-# if any file is missing, prints an error and exits the pipeline
-# also checks gzip files are not corrupted
+# Checks that a list of output files exist and are not empty
+# If any file is missing, prints an error and exits the pipeline
+# Also checks gzip files are not corrupted
 check_outputs() {
-    local description="$1"   # plain english description of what we are checking
+    local description="$1"   # description of what we are checking
     shift
     local files=("$@")       # list of files we expect to exist
 
@@ -261,7 +278,7 @@ check_outputs() {
     echo "check passed: $description"
 }
 
-# checks that a BED file is valid - has the right number of columns,
+# Checks that a BED file is valid - has the right number of columns,
 # enough lines, and valid numeric coordinates
 assert_valid_bed() {
     local file="$1"
@@ -299,7 +316,7 @@ assert_valid_bed() {
     fi
 
     # check that start coordinate is always less than end coordinate
-    if awk '{if($2>=$3){exit 1}}' "$file"; then
+    if ! awk '{if($2>=$3){exit 1}}' "$file"; then
         echo "ERROR: $description - some peaks have start >= end in: $file"
         exit 1
     fi
@@ -311,7 +328,7 @@ assert_valid_bed() {
 # PRINT RUN PLAN
 # ============================================================
 
-# print a summary of what will run and what will be skipped
+# print summary of what will run and what will be skipped
 echo "-------------------------------------------"
 echo "liver regulatory pipeline"
 echo "-------------------------------------------"
@@ -347,7 +364,7 @@ if [ "$START_STEP" -gt 1 ] || [ -n "$SKIP_STEPS" ]; then
     echo "note: some steps are being skipped."
     echo "      make sure required input files are already"
     echo "      in the correct output folder."
-    echo "      see README for details."
+    echo "      See README for details."
 fi
 
 echo "-------------------------------------------"
@@ -373,7 +390,7 @@ if should_run 1; then
 
     # run the HALPER mapping script in both directions
     # mouse to human and human to mouse
-    bash orthologMapping.sh \
+    bash "$(dirname "$0")/../step2_cross_species_mapping/orthologMapping.sh" \
         "$MOUSE_ATAC" \
         "$HUMAN_ATAC" \
         "$CACTUS_FILE" \
@@ -388,15 +405,15 @@ if should_run 1; then
     # count how many peaks were successfully mapped and print to screen
     MOUSE_MAPPED=$(zcat "$OUTPUT_DIR/mapping/MouseAtacToHumanOrtho.MouseToHuman.HALPER.narrowPeak.gz" | wc -l)
     HUMAN_MAPPED=$(zcat "$OUTPUT_DIR/mapping/HumanAtacToMouseOrtho.HumanToMouse.HALPER.narrowPeak.gz" | wc -l)
-    echo "  mouse peaks mapped to human: $MOUSE_MAPPED"
-    echo "  human peaks mapped to mouse: $HUMAN_MAPPED"
+    echo "  mouse peaks mapped to human genome: $MOUSE_MAPPED"
+    echo "  human peaks mapped to mouse genome: $HUMAN_MAPPED"
 
-    log_stage 1 "PASSED" "ortholog mapping done. mouse mapped: $MOUSE_MAPPED human mapped: $HUMAN_MAPPED"
+    log_stage 1 "PASSED" "ortholog mapping done. mouse peaks mapped: $MOUSE_MAPPED human peaks mapped: $HUMAN_MAPPED"
     echo "step 1 done"
 else
     echo "skipping step 1 - ortholog mapping (HALPER)"
 
-    # if step 1 is skipped but later steps need its outputs,
+    # If step 1 is skipped but later steps need its outputs,
     # check that the HALPER files are already present in the mapping folder
     if should_run 2 || should_run 3 || should_run 4 || should_run 5; then
         check_outputs \
@@ -415,15 +432,15 @@ if should_run 2; then
     echo ""
     echo "--- step 2: shared/unique peaks (bedtools) ---"
 
-    # check that HALPER files from step 1 are present before running
-    # these are needed as input whether step 1 ran now or previously
+    # Check that HALPER files from step 1 are present before running
+    # These are needed as input whether step 1 ran now or previously
     check_outputs \
         "HALPER narrowPeak files (step 1 - ortholog mapping output) required in $OUTPUT_DIR/mapping/" \
         "$OUTPUT_DIR/mapping/MouseAtacToHumanOrtho.MouseToHuman.HALPER.narrowPeak.gz" \
         "$OUTPUT_DIR/mapping/HumanAtacToMouseOrtho.HumanToMouse.HALPER.narrowPeak.gz"
 
-    # run bedtools to compare peaks and split into shared and unique categories
-    bash open_chromatin_finding_script.sh \
+    # run identification script to compare peaks and split into shared and unique categories
+    bash "$(dirname "$0")/../step2_cross_species_mapping/open_chromatin_finding_script.sh" \
         "$OUTPUT_DIR/mapping/MouseAtacToHumanOrtho.MouseToHuman.HALPER.narrowPeak.gz" \
         "$OUTPUT_DIR/mapping/HumanAtacToMouseOrtho.HumanToMouse.HALPER.narrowPeak.gz" \
         "$MOUSE_ATAC" \
@@ -458,19 +475,20 @@ if should_run 2; then
     MOUSE_NO_ORTHO=$(wc -l < "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed")
     HUMAN_NO_ORTHO=$(wc -l < "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed")
 
-    echo "  mouse shared in human:    $MOUSE_SHARED peaks"
-    echo "  human shared in mouse:    $HUMAN_SHARED peaks"
-    echo "  mouse open human closed:  $MOUSE_UNIQUE peaks"
-    echo "  human open mouse closed:  $HUMAN_UNIQUE peaks"
-    echo "  mouse no ortholog:        $MOUSE_NO_ORTHO peaks"
-    echo "  human no ortholog:        $HUMAN_NO_ORTHO peaks"
+    echo "  mouse peaks shared in human:    $MOUSE_SHARED peaks"
+    echo "  human peaks shared in mouse:    $HUMAN_SHARED peaks"
+    echo "  mouse peaks open but closed in human:  $MOUSE_UNIQUE peaks"
+    echo "  human peaks open but closed in mouse:  $HUMAN_UNIQUE peaks"
+    echo "  mouse peaks with no human ortholog:        $MOUSE_NO_ORTHO peaks"
+    echo "  human peaks with no mouse ortholog:        $HUMAN_NO_ORTHO peaks"
 
-    log_stage 2 "PASSED" "shared/unique peaks done. mouse shared: $MOUSE_SHARED human shared: $HUMAN_SHARED mouse unique: $MOUSE_UNIQUE human unique: $HUMAN_UNIQUE"
+    log_stage 2 "PASSED" "shared/unique peaks done. mouse peaks shared in human: $MOUSE_SHARED human peaks shared in mouse: $HUMAN_SHARED
+     unique mouse peaks: $MOUSE_UNIQUE unique human peaks: $HUMAN_UNIQUE"
     echo "step 2 done"
 else
     echo "skipping step 2 - shared/unique peaks (bedtools)"
 
-    # if step 2 is skipped but later steps need its outputs,
+    # If step 2 is skipped but later steps need its outputs,
     # check that the BED files are already present in the open_chrom folder
     if should_run 3 || should_run 4 || should_run 5; then
         check_outputs \
@@ -497,10 +515,14 @@ if should_run 3; then
     check_outputs \
         "BED files (step 2 - shared/unique peaks output) required in $OUTPUT_DIR/open_chrom/" \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed"
+        "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed"
 
     # run rGREAT on all 6 BED files to find enriched biological processes
-    bash run_rgreat_batch.sh \
+    bash "$(dirname "$0")/../step3_biological_processes/run_rgreat_batch.sh" \
         "$OUTPUT_DIR/open_chrom" \
         "$OUTPUT_DIR/gene_ontology"
 
@@ -514,7 +536,19 @@ if should_run 3; then
         "$OUTPUT_DIR/gene_ontology/mouse_no_ortholog_GREAT_GO_BP.csv" \
         "$OUTPUT_DIR/gene_ontology/human_no_ortholog_GREAT_GO_BP.csv"
 
-    log_stage 3 "PASSED" "gene ontology done. 6 GO result files produced"
+    # run rGREAT on the full raw peak sets (all mouse and human ATAC peaks)
+    bash "$(dirname "$0")/../step3_biological_processes/run_rgreat.sh" \
+        "$MOUSE_ATAC" \
+        "$HUMAN_ATAC" \
+        "$OUTPUT_DIR/gene_ontology"
+
+    # verify the 2 full-peak GO result CSV files were produced
+    check_outputs \
+        "Full-peak GO result CSV files (step 3 - gene ontology output) in $OUTPUT_DIR/gene_ontology/" \
+        "$OUTPUT_DIR/gene_ontology/liver_mouse_GO_BP_allpeaks.csv" \
+        "$OUTPUT_DIR/gene_ontology/liver_human_GO_BP_allpeaks.csv"
+
+    log_stage 3 "PASSED" "gene ontology done. 6 categorized GO result files and 2 full-peak GO result files produced"
     echo "step 3 done"
 else
     echo "skipping step 3 - gene ontology (rGREAT)"
@@ -529,7 +563,9 @@ else
             "$OUTPUT_DIR/gene_ontology/mouse_open_human_closed_GREAT_GO_BP.csv" \
             "$OUTPUT_DIR/gene_ontology/human_open_mouse_closed_GREAT_GO_BP.csv" \
             "$OUTPUT_DIR/gene_ontology/mouse_no_ortholog_GREAT_GO_BP.csv" \
-            "$OUTPUT_DIR/gene_ontology/human_no_ortholog_GREAT_GO_BP.csv"
+            "$OUTPUT_DIR/gene_ontology/human_no_ortholog_GREAT_GO_BP.csv" \
+            "$OUTPUT_DIR/gene_ontology/liver_mouse_GO_BP_allpeaks.csv" \
+            "$OUTPUT_DIR/gene_ontology/liver_human_GO_BP_allpeaks.csv"
     fi
 fi
 
@@ -554,7 +590,7 @@ if should_run 4 || should_run 5; then
 
     # run HOMER to classify peaks as enhancers or promoters
     # and find enriched transcription factor motifs in each set
-    bash enhancer_vs_promoter.sh \
+    bash "$(dirname "$0")/../step4-5_enhancers_promoters_and_motif_analysis/enhancer_vs_promoter.sh" \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
         "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
@@ -609,7 +645,7 @@ if should_run 6; then
 
     # run the python summary script which reads all results and
     # generates a text summary and bar charts
-    python summarize_results.py \
+    python "$(dirname "$0")/summarize_results.py" \
         --openChromDir "$OUTPUT_DIR/open_chrom" \
         --goDir        "$OUTPUT_DIR/gene_ontology" \
         --homerDir     "$OUTPUT_DIR/homer" \
