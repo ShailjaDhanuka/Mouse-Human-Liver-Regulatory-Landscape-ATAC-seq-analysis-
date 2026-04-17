@@ -83,10 +83,14 @@ bash step6_automated_pipeline/automatedPipeline.sh \
 ```
 ---
 
-## Pipeline Instructions
+## Pipeline Instructions & Usage
+### Step 1: Clone this respo to your woking folder.
 To begin using this pipeline, you will have to clone the repository into you desired folder.
+```bash
+git clone https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-.git 
+```
 
-#### Dependencies and Installation Instructions
+### Step 2: Dependencies and Installation Instructions
 Ensure all necessary dependencies and environments are installed/created.  Then update config.sh file with file paths to your conda source and specific environments. This includes:
 
 - halLiftover and HALPER (install in its own hal environment) - [Installation Instructions](https://github.com/pfenninglab/halLiftover-postprocessing/blob/master/hal_install_instructions.md)
@@ -95,6 +99,46 @@ Ensure all necessary dependencies and environments are installed/created.  Then 
   - ``conda install bioconda::homer``
   - Further installation methods - [Installation Instructions](http://homer.ucsd.edu/homer/introduction/install.html)
 - bedtools -- [Installation Instructions](https://bedtools.readthedocs.io/en/latest/content/installation.html)
+
+### Step 3: Prepare your data
+You need to have mouse&humane ATAC-seq files, cactus files and your desired output folder prepared. If you have done mapping, open chromatin identification or GO enrichment, please follow the instructions here to make sure output files are placed correctly:
+```text
+HALPER output (ortholog mapping)-> <output_dir>/mapping/
+BED files (open chrom identification) -> <output_dir>/open_chrom/
+GO csv files (rGREAT result) -> <output_dir>/gene_ontology/
+```
+
+### Step 4: Run the scripts.
+This pipeline is able to perform 6 possible downstream analysis. And you can designate the exact steps you want.
+``` bash
+    1 = ortholog mapping (HALPER)
+    2 = shared/unique peaks (bedtools)
+    3 = gene ontology (rGREAT)
+    4 = enhancer/promoter classification (HOMER annotatePeaks)
+    5 = motif analysis (HOMER findMotifsGenome)
+    6 = summary and plots (Python)
+```
+To run the pipeline on slurm, follow the intsructions here:
+```bash
+cd /path/to/this/respo/
+cd ./step6_automated_pipelin
+sbatch automatedPipeline.sh <mouse_peaks> <human_peaks> <cactus_file> <output_dir> --start-step 1 --end-step 6 --skip 3,4
+```
+The default set for `start-step` and `end-step` is `1` and `6` separately. Here is an example of running the pipeline from step 1 to step 6 while skipping step 3&4. You can replace the parameters with whatever you want in your own workflow.
+
+The detailed usage instructions are here:
+```bash
+Required:
+    <mouse_peaks> path to mouse ATAC-seq
+    <human_peaks> path to human ATAC-seq
+    <cactus_file> path to cactus file
+    <output_dir>  path to output directory
+Optional:
+    --start-step N    Start from step N (default: 1)
+    --end-step N      Stop after step N (default: 6)
+    --skip N,N,...    Skip specific steps e.g. --skip 3,4
+```
+
 
 ## Tools & References
 
