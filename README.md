@@ -13,6 +13,9 @@ This project investigates the conservation of transcriptional regulatory activit
 - Does the transcriptional regulatory code differ between species and between element types?
 - What biological processes are regulated by shared vs. species-specific elements?
 
+
+<img width="1440" height="1312" alt="image" src="https://github.com/user-attachments/assets/9902f431-e00b-4a8c-a879-fd40726eba9e" />
+
 ---
 
 ## Repository Structure
