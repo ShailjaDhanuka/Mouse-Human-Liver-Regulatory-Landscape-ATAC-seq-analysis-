@@ -98,25 +98,21 @@ check_annotation() {
 split_peaks() {
     local annotated=$1
     local prefix=$2
-    local threshold=${3:-1000}
 
-    awk -F'\t' -v thresh="$threshold" \
-        'NR>1 && ($10>=-thresh && $10<=thresh)' "$annotated" | \
+    awk -F'\t' 'NR>1 && $8 ~ /promoter-TSS/' "$annotated" | \
         awk -F'\t' 'OFS="\t" {print $2, $3, $4}' > "${prefix}_promoter_peaks.bed"
+
+    awk -F'\t' 'NR>1 && ($8 ~ /Intergenic/ || $8 ~ /Intron/)' "$annotated" | \
+        awk -F'\t' 'OFS="\t" {print $2, $3, $4}' > "${prefix}_enhancer_peaks.bed"
 
     if [[ ! -s "${prefix}_promoter_peaks.bed" ]]; then
       echo "WARNING: No promoter peaks found for ${prefix}"
     fi
-    
-    awk -F'\t' -v thresh="$threshold" \
-        'NR>1 && ($10<-thresh || $10>thresh)' "$annotated" | \
-        awk -F'\t' 'OFS="\t" {print $2, $3, $4}' > "${prefix}_enhancer_peaks.bed"
-
     if [[ ! -s "${prefix}_enhancer_peaks.bed" ]]; then
       echo "WARNING: No enhancer peaks found for ${prefix}"
     fi
 
-    echo "Created ${prefix}_promoter_peaks.bed and ${prefix}_enhancer_peaks.bed with threshold ${threshold}bp"
+    echo "Created ${prefix}_promoter_peaks.bed and ${prefix}_enhancer_peaks.bed"
 
 }
 
@@ -134,10 +130,18 @@ check_annotation annotated_unique_mouse_peaks.txt "unique_mouse"
 check_annotation annotated_unique_human_peaks.txt "unique_human"
 
 echo "Splitting peaks into promoters and enhancers.."
-split_peaks annotated_shared_mouse_peaks.txt shared_mouse 1000
-split_peaks annotated_shared_human_peaks.txt shared_human 1000
-split_peaks annotated_unique_mouse_peaks.txt unique_mouse 1000
-split_peaks annotated_unique_human_peaks.txt unique_human 1000
+split_peaks annotated_shared_mouse_peaks.txt shared_mouse
+split_peaks annotated_shared_human_peaks.txt shared_human
+split_peaks annotated_unique_mouse_peaks.txt unique_mouse
+split_peaks annotated_unique_human_peaks.txt unique_human
+
+echo "Copying peak BED files to output directory for downstream counting.."
+for prefix in shared_mouse shared_human unique_mouse unique_human; do
+  for type in promoter enhancer; do
+    bed="${prefix}_${type}_peaks.bed"
+    [[ -f "$bed" ]] && cp "$bed" "$OUT_DIR/$bed"
+  done
+done
 
 echo "Running motif enrichment.."
 
