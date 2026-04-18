@@ -156,59 +156,6 @@ def plot_peak_counts(counts, output_dir):
     plt.close()
     print("saved peak_counts.png")
 
-def plot_go_terms(go_results, output_dir, n=5):
-    plot_order = [
-        ("mouse_shared_in_human", "mouse shared (human coords)"),
-        ("human_shared_in_mouse", "human shared (mouse coords)"),
-        ("mouse_open_human_closed", "mouse open / human closed"),
-        ("human_open_mouse_closed", "human open / mouse closed"),
-        ("mouse_no_ortholog", "mouse no ortholog"),
-        ("human_no_ortholog", "human no ortholog"),
-        ("mouse_allpeaks", "all mouse peaks"),
-        ("human_allpeaks", "all human peaks"),
-    ]
-
-    # only keep plot panels that have at least one significant term
-    panels = [(key, label, go_results[key]) for key, label in plot_order
-              if key in go_results and go_results[key] is not None and not go_results[key].empty]
-
-    # in case no sign terms
-    if not panels:
-        print("no significant GO terms to plot")
-        return
-
-    import math
-    import numpy as np
-
-    ncols = 2
-    nrows = math.ceil(len(panels) / ncols)
-    fig, axes = plt.subplots(nrows, ncols, figsize = (14, 4 * nrows))
-    axes = axes.flatten() if len(panels) > 1 else [axes]
-
-    for ax, (key, label, df) in zip(axes, panels):
-        top = df.head(n).copy()
-        top["-log10_padj"] = -np.log10(top["p_adjust"].clip(lower = 1e-300))
-        # wrap long descriptions
-        top["desc_short"] = top["description"].str.slice(0, 50)
-        top = top.iloc[::-1]  # flip so most significant is at top
-
-        ax.barh(top["desc_short"], top["-log10_padj"], color = "steelblue")
-        ax.axvline(x = -math.log10(0.05), color = "red", linestyle = "--", linewidth = 0.8, label = "p_adj=0.05")
-        ax.set_xlabel("-log10(p_adjust)")
-        ax.set_title(label, fontsize = 10)
-        ax.tick_params(axis = "y", labelsize = 8)
-        ax.legend(fontsize =7 )
-
-    # hide any unused subplot panels
-    for ax in axes[len(panels):]:
-        ax.set_visible(False)
-
-    plt.suptitle("GO Biological Process enrichment (top " + str(n) + " per category)", fontsize = 12, y = 1.01)
-    plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, "go_enrichment.png"), dpi = 150, bbox_inches = "tight")
-    plt.close()
-    print("saved go_enrichment.png")
-
 def plot_promoter_enhancer(pe_counts, output_dir):
     # grouped bar chart comparing promoter vs enhancer counts
     categories = ["shared_human", "shared_mouse", "unique_human", "unique_mouse"]
@@ -411,7 +358,6 @@ def main():
     print("making plots...")
     plot_peak_counts(counts, options.outputDir)
     plot_promoter_enhancer(pe_counts, options.outputDir)
-    plot_go_terms(go_results, options.outputDir)
 
     print("writing summary...")
     write_summary(counts, pe_counts, go_results, motif_results, options.outputDir)
