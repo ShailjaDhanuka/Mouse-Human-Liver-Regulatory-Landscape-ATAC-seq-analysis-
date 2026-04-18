@@ -1,0 +1,15 @@
+Pipeline started: Sat Apr 18 18:49:49 EDT 2026
+Mouse ATAC:  /ocean/projects/bio230007p/ikaplow/MouseAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+Human ATAC:  /ocean/projects/bio230007p/ikaplow/HumanAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+Cactus file: /ocean/projects/bio230007p/ikaplow/Alignments/10plusway-master.hal
+Output dir:  /ocean/projects/bio230007p/sturecki/project/pipelineTest
+
+[SKIPPED] Step 1: ortholog mapping (HALPER) (Sat Apr 18 18:49:50 EDT 2026)
+[SKIPPED] Step 2: shared/unique peaks (bedtools) (Sat Apr 18 18:49:50 EDT 2026)
+[SKIPPED] Step 3: gene ontology (rGREAT) (Sat Apr 18 18:49:50 EDT 2026)
+[SKIPPED] Step 4: enhancer/promoter classification (HOMER annotatePeaks) (Sat Apr 18 18:49:50 EDT 2026)
+[SKIPPED] Step 5: motif analysis (HOMER findMotifsGenome) (Sat Apr 18 18:49:50 EDT 2026)
+[PLANNED] Step 6: summary and plots (Python) (Sat Apr 18 18:49:50 EDT 2026)
+[PASSED] Step 6: summary and plots done (Sat Apr 18 18:49:57 EDT 2026)
+
+pipeline finished: Sat Apr 18 18:49:57 EDT 2026
