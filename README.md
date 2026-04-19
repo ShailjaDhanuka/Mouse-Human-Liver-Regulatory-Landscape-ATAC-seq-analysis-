@@ -1,11 +1,11 @@
-# Mouse-Human Liver Regulatory Landscape — ATAC-seq Analysis
+# ATACer: Mouse-Human Liver Regulatory Landscape — ATAC-seq Analysis
 ### 03-713: Bioinformatics Data Integration Practicum | Spring 2026
 
 ---
 
 ## Overview
 
-This project investigates the conservation of transcriptional regulatory activity between human and mouse liver tissue using open chromatin (ATAC-seq) data. We map regulatory elements across species, classify them as enhancers or promoters, identify their biological function, and discover enriched sequence motifs — all tied together in a single automated pipeline.
+This project creates a pipeline called ATACer and investigates the conservation of transcriptional regulatory activity between human and mouse liver tissue using open chromatin (ATAC-seq) data. We map regulatory elements across species, classify them as enhancers or promoters, identify their biological function, and discover enriched sequence motifs — all tied together in ATACer.
 
 **Core research questions:**
 - To what extent is transcriptional regulatory activity conserved between human and mouse?
