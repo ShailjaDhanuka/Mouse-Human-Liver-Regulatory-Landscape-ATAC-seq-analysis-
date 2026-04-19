@@ -129,8 +129,8 @@ The default set for `start-step` and `end-step` is `1` and `6` separately. Here 
 
 The detailed usage instructions are here:
 ```bash
-    sbatch (or bash) automatedPipeline.sh \
-    <mouse_peaks> <human_peaks> <cactus_file> <output_dir>\
+sbatch (or bash) automatedPipeline.sh \
+    <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
     [--start-step N] [--end-step N] [--skip N,N,...]
 ```
 The required parameters are:
@@ -155,7 +155,7 @@ The output should be in your designated output directory in the following struct
 ├── pipeline_summary.txt             ← summary of all the results
 ├── stage_log.txt                    ← log file
 ```
-You can also go to the sample output folder(./sampleOutputs/) for reference.
+You can also go to the [sample output folder](./sampleOutputs/) for reference.
 
 ## Tools & References
 
