@@ -87,7 +87,7 @@ bash step6_automated_pipeline/automatedPipeline.sh \
 ---
 
 ## Pipeline Instructions & Usage
-### Step 1: Clone this respo to your woking folder.
+### Step 1: Clone this repo to your working folder.
 To begin using this pipeline, you will have to clone the repository into you desired folder.
 ```bash
 git clone https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-.git 
