@@ -135,16 +135,16 @@ The detailed usage instructions are here:
 ```
 The required parameters are:
 ```bash
-    <mouse_peaks> path to mouse ATAC-seq
-    <human_peaks> path to human ATAC-seq
-    <cactus_file> path to cactus file
-    <output_dir>  path to output directory
+    <mouse_peaks> -> path to mouse ATAC-seq
+    <human_peaks> -> path to human ATAC-seq
+    <cactus_file> -> path to cactus file
+    <output_dir>  -> path to output directory
 ```
 The optional parameters are:
 ```bash
-    --start-step N    Start from step N (default: 1)
-    --end-step N      Stop after step N (default: 6)
-    --skip N,N,...    Skip specific steps e.g. --skip 3,4
+    --start-step N    -> Start from step N (default: 1)
+    --end-step N      -> Stop after step N (default: 6)
+    --skip N,N,...    -> Skip specific steps e.g. --skip 3,4
 ```
 ## Sample Output
 The output should be in your designated output directory in the following structure.
@@ -155,7 +155,7 @@ The output should be in your designated output directory in the following struct
 ├── pipeline_summary.txt             ← summary of all the results
 ├── stage_log.txt                    ← log file
 ```
-You can also go to the sample output folder((./sampleOutputs/)) for reference.
+You can also go to the sample output folder(./sampleOutputs/) for reference.
 
 ## Tools & References
 
