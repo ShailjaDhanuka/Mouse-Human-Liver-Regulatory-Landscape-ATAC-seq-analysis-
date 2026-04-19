@@ -33,7 +33,7 @@ This project investigates the conservation of transcriptional regulatory activit
 
 ---
 
-## Pipeline Steps
+## Pipeline Design
 
 ### Step 1 — Quality Evaluation
 Quality assessment outputs for ATAC-seq data sets considered for creation of this pipeline. Select the highest-quality dataset for downstream analysis based on peak count, FRiP score, and signal enrichment.
@@ -168,6 +168,11 @@ You can also go to the [sample output folder](./sampleOutputs/) for reference.
 | HOMER         | Peak annotation and motif discovery                          | [Docs](http://homer.ucsd.edu/homer/) · [Paper](https://pubmed.ncbi.nlm.nih.gov/20513432/)                                                          |
 
 ---
+
+## Limitations
+When using this pipeline, there are a few assumptions and limitations to keep in mind.
+- The GO analysis does not take peak signal strength into account.
+- The pipeline assumes that the input data has been properly preprocessed and is of high quality.
 
 ## Contributors
 
