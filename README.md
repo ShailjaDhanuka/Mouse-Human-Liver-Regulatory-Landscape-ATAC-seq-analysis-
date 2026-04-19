@@ -105,22 +105,20 @@ Ensure all necessary dependencies and environments are installed/created.  Then 
 
 ### Step 3: Prepare your data
 You need to have mouse&humane ATAC-seq files, cactus files and your desired output folder prepared. If you have done mapping, open chromatin identification or GO enrichment, please follow the instructions here to make sure output files are placed correctly:
-```text
-HALPER output (ortholog mapping)-> <output_dir>/mapping/
-BED files (open chrom identification) -> <output_dir>/open_chrom/
-GO csv files (rGREAT result) -> <output_dir>/gene_ontology/
-```
+- HALPER output (ortholog mapping)-> `<output_dir>/mapping/`
+- BED files (open chrom identification) -> `<output_dir>/open_chrom/`
+- GO csv files (rGREAT result) -> `<output_dir>/gene_ontology/`
+
 
 ### Step 4: Run the scripts.
 This pipeline is able to perform 6 possible downstream analysis. And you can designate the exact steps you want.
-``` bash
-    1 = ortholog mapping (HALPER)
-    2 = shared/unique peaks (bedtools)
-    3 = gene ontology (rGREAT)
-    4 = enhancer/promoter classification (HOMER annotatePeaks)
-    5 = motif analysis (HOMER findMotifsGenome)
-    6 = summary and plots (Python)
-```
+- 1 = ortholog mapping (HALPER)
+- 2 = shared/unique peaks (bedtools)
+- 3 = gene ontology (rGREAT)
+- 4 = enhancer/promoter classification (HOMER annotatePeaks)
+- 5 = motif analysis (HOMER findMotifsGenome)
+- 6 = summary and plots (Python)
+
 To run the pipeline on slurm, follow the intsructions here:
 ```bash
 cd /path/to/this/respo/
@@ -131,17 +129,33 @@ The default set for `start-step` and `end-step` is `1` and `6` separately. Here 
 
 The detailed usage instructions are here:
 ```bash
-Required:
+    sbatch (or bash) automatedPipeline.sh \
+    <mouse_peaks> <human_peaks> <cactus_file> <output_dir>\
+    [--start-step N] [--end-step N] [--skip N,N,...]
+```
+The required parameters are:
+```bash
     <mouse_peaks> path to mouse ATAC-seq
     <human_peaks> path to human ATAC-seq
     <cactus_file> path to cactus file
     <output_dir>  path to output directory
-Optional:
+```
+The optional parameters are:
+```bash
     --start-step N    Start from step N (default: 1)
     --end-step N      Stop after step N (default: 6)
     --skip N,N,...    Skip specific steps e.g. --skip 3,4
 ```
-
+## Sample Output
+The output should be in your designated output directory in the following structure.
+```
+├── go_enrichment.png                ← GO enrichment results
+├── peak_counts.png                  ← unique/shared peak counting
+├── promoter_vs_enhancer.png         ← promoter/enhancer peak counting
+├── pipeline_summary.txt             ← summary of all the results
+├── stage_log.txt                    ← log file
+```
+You can also go to the sample output folder((./sampleOutputs/)) for reference.
 
 ## Tools & References
 
