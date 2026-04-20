@@ -4,8 +4,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # script to summarize results from the open chromatin pipeline
-# reads in all the output files and makes plots and a text summary
+# reads in all the output files and makes plots and a summary text file
 
+# defining expected command line arguments
 def parse_arguments():
     parser = argparse.ArgumentParser(description="summarize pipeline results")
     parser.add_argument("--openChromDir", required=True, help="folder with BED files from bedtools")
@@ -28,6 +29,7 @@ def count_peaks(bed_dir):
         "human_no_ortholog": "human_no_ortholog.humanCoords.bed"
     }
 
+    # getting counts for each bed file in open chrom directory
     counts = {}
     for label, filename in files.items():
         filepath = os.path.join(bed_dir, filename)
@@ -45,6 +47,7 @@ def count_promoters_enhancers(homer_dir):
     categories = ["shared_human", "shared_mouse", "unique_human", "unique_mouse"]
     counts = {}
 
+    # getting counts of peaks in each type of promoter/enhancer file in the homer directory
     for cat in categories:
         for ptype in ("promoter", "enhancer"):
             bed = os.path.join(homer_dir, cat + "_" + ptype + "_peaks.bed")
@@ -72,11 +75,12 @@ def get_top_go_terms(go_dir, n=5):
         "human_allpeaks": "liver_human_GO_BP_allpeaks.csv"
     }
 
+    # filtering out csv files for only significant results (p val < 0.05
     for label, filename in files.items():
         filepath = os.path.join(go_dir, filename)
         if os.path.exists(filepath):
             df = pd.read_csv(filepath)
-            # filter to only significant terms
+            # only keeping top 5 significant terms
             sig = df[df["p_adjust"] < 0.05].head(n)
             results[label] = sig
         else:
@@ -98,6 +102,7 @@ def get_top_motifs(homer_dir, n=5):
         "unique_mouse_promoter_motifs"
     ]
 
+    # reading known motif results and only keeping top 5
     for subdir in subdirs:
         known_results = os.path.join(homer_dir, subdir, "knownResults.txt")
         if os.path.exists(known_results):
@@ -112,7 +117,7 @@ def get_top_motifs(homer_dir, n=5):
 def get_top_denovo_motifs(homer_dir, n=5):
     # parsing de novo motifs from homerMotifs.all.motifs output
     # each motif header line starts with > and contains
-    # >consensus  name  log-odds  log-p-value  0,  T:...,B:...,P:raw_pval
+    # headers: >consensus  name  log-odds  log-p-value  0,  T:...,B:...,P:raw_pval
     results = {}
     subdirs = [
         "shared_human_enhancer_motifs",
@@ -125,12 +130,14 @@ def get_top_denovo_motifs(homer_dir, n=5):
         "unique_mouse_promoter_motifs"
     ]
 
+    # getting de novo motifs for each OCR category
     for subdir in subdirs:
         motif_file = os.path.join(homer_dir, subdir, "homerMotifs.all.motifs")
         if not os.path.exists(motif_file):
             results[subdir] = pd.DataFrame()
             continue
 
+        # making list of all motifs
         motifs = []
         with open(motif_file) as f:
             for line in f:
@@ -155,6 +162,7 @@ def get_top_denovo_motifs(homer_dir, n=5):
                     "p_value": raw_pval
                 })
 
+        # only keeping top 5 motifs
         results[subdir] = pd.DataFrame(motifs).head(n) if motifs else pd.DataFrame()
 
     return results
@@ -185,6 +193,7 @@ def plot_peak_counts(counts, output_dir):
         "gray", "gray"
     ]
 
+    # using values in count dict from count_peaks function results
     values = [counts.get(k, 0) for k in keys]
 
     fig, ax = plt.subplots(figsize=(10, 6))
@@ -213,15 +222,16 @@ def plot_promoter_enhancer(pe_counts, output_dir):
     categories = ["shared_human", "shared_mouse", "unique_human", "unique_mouse"]
     labels = ["shared (human)", "shared (mouse)", "unique (human)", "unique (mouse)"]
 
+    # getting count of promoters / enhancers from count promoters and enhancers function results
     promoter_counts = [pe_counts.get(c + "_promoter", 0) for c in categories]
     enhancer_counts = [pe_counts.get(c + "_enhancer", 0) for c in categories]
 
+
     x = range(len(categories))
     width = 0.35
-
     fig, ax = plt.subplots(figsize=(10, 6))
 
-    # plot promoters and enhancers side by side for each category
+    # plotting promoters and enhancers side by side for each category
     ax.bar([i - width/2 for i in x], promoter_counts, width, label="promoters", color="green")
     ax.bar([i + width/2 for i in x], enhancer_counts, width, label="enhancers", color="purple")
 
@@ -248,6 +258,7 @@ def plot_go_terms(go_results, output_dir, n=5):
         ("human_allpeaks", "all human peaks"),
     ]
 
+    # getting data for each cateogory of GO plots
     panels = [(key, label, go_results[key]) for key, label in plot_order
               if key in go_results and go_results[key] is not None and not go_results[key].empty]
 
@@ -255,15 +266,19 @@ def plot_go_terms(go_results, output_dir, n=5):
         print("no significant GO terms to plot")
         return
 
+    # calculating the grid dimensions of subplots so they fit into 2 cols
     ncols = 2
     nrows = math.ceil(len(panels) / ncols)
     fig, axes = plt.subplots(nrows, ncols, figsize=(14, 4 * nrows))
     axes = axes.flatten() if len(panels) > 1 else [axes]
 
+    # only taking top 5 enriched pathways
     for ax, (key, label, df) in zip(axes, panels):
         top = df.head(n).copy()
+        # shortening GO pathway description
         top["desc_short"] = top["description"].str.slice(0, 50)
-        top = top.iloc[::-1]  # flip so highest fold enrichment is at top
+        # reversing order so highest fold enrichment is first
+        top = top.iloc[::-1]
 
         ax.barh(top["desc_short"], top["fold_enrichment"], color="steelblue")
         ax.set_xlabel("fold enrichment")
@@ -280,7 +295,9 @@ def plot_go_terms(go_results, output_dir, n=5):
     print("saved go_enrichment.png")
 
 def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_results, output_dir):
-    # write all results to a single text file
+    # write all results to a single text file pipeline_summary.txt
+
+    # initializing where summary text file will be (output dir in summary dir)
     summary_path = os.path.join(output_dir, "pipeline_summary.txt")
 
     with open(summary_path, "w") as f:
@@ -288,10 +305,11 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
         f.write("pipeline summary - comparative open chromatin analysis\n")
         f.write("-" * 60 + "\n\n")
 
-        # section 1 - peak counts per category
+        ### section 1 - peak counts per category
         f.write("1. peak mapping results\n")
         f.write("-" * 60 + "\n\n")
 
+        # getting counts of peaks for each category
         total_human = counts.get("human_atac", 0)
         total_mouse = counts.get("mouse_atac", 0)
         mouse_shared = counts.get("mouse_shared_in_human", 0)
@@ -301,7 +319,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
         mouse_no_ortho = counts.get("mouse_no_ortholog", 0)
         human_no_ortho = counts.get("human_no_ortholog", 0)
 
-        # calculate percentages, avoiding zero division
+        # calculate percentages of shared peaks, avoiding zero division
         if total_mouse > 0:
             mouse_shared_pct = mouse_shared / total_mouse * 100
         else:
@@ -325,7 +343,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
         f.write("mouse peaks with no ortholog: " + str(mouse_no_ortho) + "\n")
         f.write("human peaks with no ortholog: " + str(human_no_ortho) + "\n\n")
 
-        # section 2 - GO terms (categorized peaks)
+        ### section 2 - GO terms (categorized peaks)
         f.write("2. top enriched biological processes - categorized peaks (rGREAT GO:BP)\n")
         f.write("-" * 60 + "\n")
         f.write("note: p_adj = 0.00e+00 indicates floating point underflow (p-value too small to represent -- extremely significant)\n\n")
@@ -339,6 +357,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
             "human_no_ortholog": "human no ortholog"
         }
 
+        # getting go results for each cateogry and writing top 5 with fold and adjusted p val
         for key, label in go_labels.items():
             f.write(label + "\n")
             df = go_results.get(key, pd.DataFrame())
@@ -352,7 +371,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
                 f.write("  no significant GO terms found (p_adjust > 0.05)\n")
             f.write("\n")
 
-        # section 2b - GO terms (full raw peak sets)
+        ### section 2b - GO terms (full raw peak sets)
         f.write("2b. top enriched biological processes - all peaks (rGREAT GO:BP)\n")
         f.write("-" * 60 + "\n")
         f.write("note: p_adj = 0.00e+00 indicates floating point underflow (p-value too small to represent -- extremely significant)\n\n")
@@ -362,6 +381,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
             "human_allpeaks": "all human ATAC peaks"
         }
 
+        # same thing as 2a
         for key, label in allpeaks_labels.items():
             f.write(label + "\n")
             df = go_results.get(key, pd.DataFrame())
@@ -375,7 +395,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
                 f.write("  no significant GO terms found (p_adjust > 0.05)\n")
             f.write("\n")
 
-        # section 3 - promoter vs enhancer counts
+        ### section 3 - promoter vs enhancer counts
         f.write("3. promoters vs enhancers\n")
         f.write("-" * 60 + "\n\n")
 
@@ -386,11 +406,13 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
             ("unique_mouse", "mouse-unique peaks")
         ]
 
+        # getting count of promoters and enhancers for each category and total identified
         for key, label in pe_labels:
             prom = pe_counts.get(key + "_promoter", 0)
             enh = pe_counts.get(key + "_enhancer", 0)
             total = prom + enh
 
+            # finding percentage of promoters vs enhancers
             if total > 0:
                 prom_pct = round(prom / total * 100, 1)
                 enh_pct = round(enh / total * 100, 1)
@@ -398,12 +420,13 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
                 prom_pct = 0
                 enh_pct = 0
 
+            # writing in results to summary file
             f.write(label + "\n")
             f.write("  promoters: " + str(prom) + " (" + str(prom_pct) + "%)\n")
             f.write("  enhancers: " + str(enh) + " (" + str(enh_pct) + "%)\n")
             f.write("  total: " + str(total) + "\n\n")
 
-        # section 4 - top known motifs
+        ### section 4 - top known motifs
         f.write("4. top enriched known motifs in promoters and enhancers\n")
         f.write("-" * 60 + "\n\n")
 
@@ -418,6 +441,7 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
             ("unique_mouse_enhancer_motifs", "mouse-unique enhancers")
         ]
 
+        # getting top 5 known motifs and writing in motif name and p val
         for key, label in motif_labels:
             f.write(label + "\n")
             df = motif_results.get(key, pd.DataFrame())
@@ -430,10 +454,11 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
                 f.write("  no motif results found\n")
             f.write("\n")
 
-        # section 5 - top de novo motifs
+        ### section 5 - top de novo motifs
         f.write("5. top de novo motifs in promoters and enhancers (HOMER)\n")
         f.write("-" * 60 + "\n\n")
 
+        # getting top 5 de novo discovered motifs and writing in name, consensus seq and p val
         for key, label in motif_labels:
             f.write(label + "\n")
             df = denovo_motif_results.get(key, pd.DataFrame())
@@ -452,30 +477,37 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
 
     print("saved pipeline_summary.txt")
 
+# main function that performs full summary workflow
 def main():
     options = parse_arguments()
 
-    # create output folder if it doesnt exist
+    # create output folder if it doesn't exist
     os.makedirs(options.outputDir, exist_ok=True)
 
+    # getting peak count summary
     print("counting peaks...")
     counts = count_peaks(options.openChromDir)
 
+    # getting promoter vs enhancer summary
     print("counting promoters and enhancers...")
     pe_counts = count_promoters_enhancers(options.homerDir)
 
+    # getting top 5 go results
     print("reading GO results...")
     go_results = get_top_go_terms(options.goDir)
 
+    # getting top 5 known motifs results
     print("reading HOMER motifs...")
     motif_results = get_top_motifs(options.homerDir)
     denovo_motif_results = get_top_denovo_motifs(options.homerDir)
 
+    # plotting peaks, promoters vs. enhancers and go results
     print("making plots...")
     plot_peak_counts(counts, options.outputDir)
     plot_promoter_enhancer(pe_counts, options.outputDir)
     plot_go_terms(go_results, options.outputDir)
 
+    # writing summary into text file
     print("writing summary...")
     write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_results, options.outputDir)
 
