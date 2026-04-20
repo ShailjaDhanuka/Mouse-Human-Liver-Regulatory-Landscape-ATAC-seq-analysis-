@@ -21,8 +21,9 @@ This project creates a pipeline called ATACer and investigates the conservation 
 ## Repository Structure
 
 ```
+├── sampleOutputs                    ← Example files of summarized pipeline outputs
 ├── step1_quality_evaluation         ← Quality assessment of ATAC-seq datasets
-├── step1_cross_species_mapping/     ← Liftover & ortholog identification (HALPER)
+├── step1_cross_species_mapping/     ← Liftover & ortholog identification (halLiftover/HALPER)
 ├── step2_biological_processes/      ← Gene ontology enrichment (rGREAT)
 ├── step3-4_enh_vs_prom_and_motifs   ← Regulatory element classification + TF motif analysis (HOMER)
 ├── step5_automated_pipeline/        ← End-to-end automated pipeline
@@ -71,7 +72,7 @@ Discover over-represented sequence motifs in enhancers, promoters, shared region
 ---
 
 ### Step 6 — Automated Pipeline
-A single-command pipeline that runs Steps 2–5 sequentially on any Linux cluster with the required tools installed.
+A single-command pipeline that runs Steps 2–5 sequentially and provides a summary of results on any Linux cluster with the required tools installed.
 
 ```bash
 bash step6_automated_pipeline/automatedPipeline.sh \
@@ -88,30 +89,30 @@ bash step6_automated_pipeline/automatedPipeline.sh \
 
 ## Pipeline Instructions & Usage
 ### Step 1: Clone this repo to your working folder.
-To begin using this pipeline, you will have to clone the repository into you desired folder.
+To use this pipeline, you will have to clone the repository into any desired directory.
 ```bash
 git clone https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-.git 
 ```
 
 ### Step 2: Dependencies and Installation Instructions
-Ensure all necessary dependencies and environments are installed/created.  Then update config.sh file with file paths to your conda source and specific environments. This includes:
+Ensure all necessary dependencies and environments are installed/created. Then update the config.sh file with file paths to your conda source and specific environments. This includes:
 
 - halLiftover and HALPER (install in its own hal environment) - [Installation Instructions](https://github.com/pfenninglab/halLiftover-postprocessing/blob/master/hal_install_instructions.md)
 - rGreat (install in its own rGreat environment) - [Installation Instructions](https://github.com/jokergoo/rGREAT/blob/master/README.md)
 - HOMER (install in its own HOMER environment) - easiest to use bioconda to install (must have bioconda channel)
-  - ``conda install bioconda::homer``
   - Further installation methods - [Installation Instructions](http://homer.ucsd.edu/homer/introduction/install.html)
 - bedtools -- [Installation Instructions](https://bedtools.readthedocs.io/en/latest/content/installation.html)
 
 ### Step 3: Prepare your data
-You need to have mouse&humane ATAC-seq files, cactus files and your desired output folder prepared. If you have done mapping, open chromatin identification or GO enrichment, please follow the instructions here to make sure output files are placed correctly:
-- HALPER output (ortholog mapping)-> `<output_dir>/mapping/`
+You need to have mouse and human ATAC-seq files, a Cactus HAL alignmemt file and your desired output folder prepared. If you have done mapping, open chromatin identification or GO enrichment, please follow the instructions here to make sure output files are placed correctly:
+- halLiftover/HALPER output (ortholog mapping)-> `<output_dir>/mapping/`
 - BED files (open chrom identification) -> `<output_dir>/open_chrom/`
 - GO csv files (rGREAT result) -> `<output_dir>/gene_ontology/`
+- HOMER BED and motif files (HOMER result) -> `<output_dir>/homer/`
 
 
 ### Step 4: Run the scripts.
-This pipeline is able to perform 6 possible downstream analysis. And you can designate the exact steps you want.
+This pipeline is able to perform 6 possible downstream analysis. You can designate the exact steps you want.
 - 1 = ortholog mapping (HALPER)
 - 2 = shared/unique peaks (bedtools)
 - 3 = gene ontology (rGREAT)
@@ -119,14 +120,15 @@ This pipeline is able to perform 6 possible downstream analysis. And you can des
 - 5 = motif analysis (HOMER findMotifsGenome)
 - 6 = summary and plots (Python)
 
-To run the pipeline on slurm, follow the intsructions here:
+To run the pipeline on slurm, follow the instructions here:
 ```bash
-cd /path/to/this/respo/
-cd ./step6_automated_pipelin
-sbatch automatedPipeline.sh <mouse_peaks> <human_peaks> <cactus_file> <output_dir> --start-step 1 --end-step 6 --skip 3,4
+cd /path/to/this/repo/step6_automated_pipelin
+sbatch automatedPipeline.sh <mouse_peaks> <human_peaks> <cactus_file> <output_dir>
 ```
-The default set for `start-step` and `end-step` is `1` and `6` separately. Here is an example of running the pipeline from step 1 to step 6 while skipping step 3&4. You can replace the parameters with whatever you want in your own workflow.
-
+The default set for `start-step` and `end-step` is `1` and `6`, respectively. Here is an example of running the pipeline from step 2 to step 6 while skipping steps 3 & 4. You can replace the parameters with whatever you want in your own workflow.
+```bash
+sbatch automatedPipeline.sh <mouse_peaks> <human_peaks> <cactus_file> <output_dir> --start-step 2 --end-step 6 --skip 3,4
+```
 The detailed usage instructions are here:
 ```bash
 sbatch (or bash) automatedPipeline.sh \
@@ -146,8 +148,8 @@ The optional parameters are:
     --end-step N      -> Stop after step N (default: 6)
     --skip N,N,...    -> Skip specific steps e.g. --skip 3,4
 ```
-## Sample Output
-The output should be in your designated output directory in the following structure.
+## Summary Output
+The summarized output should be in your designated output directory in the summary directory. It has the following structure:
 ```
 ├── go_enrichment.png                ← GO enrichment results
 ├── peak_counts.png                  ← unique/shared peak counting
@@ -155,7 +157,7 @@ The output should be in your designated output directory in the following struct
 ├── pipeline_summary.txt             ← summary of all the results
 ├── stage_log.txt                    ← log file
 ```
-You can also go to the [sample output folder](./sampleOutputs/) for reference.
+You can also go to the [sample output folder](./sampleOutputs/) for reference of what each file contains.
 
 ## Tools & References
 
@@ -172,6 +174,7 @@ You can also go to the [sample output folder](./sampleOutputs/) for reference.
 ## Limitations
 When using this pipeline, there are a few assumptions and limitations to keep in mind.
 - The GO analysis does not take peak signal strength into account.
+- The full pipeline takes several hours on slurm
 - The pipeline assumes that the input data has been properly preprocessed and is of high quality.
 
 ## Contributors
@@ -183,7 +186,9 @@ When using this pipeline, there are a few assumptions and limitations to keep in
 | Shreya Balamurugan | [@sbalamur02](https://github.com/sbalamur02)        |
 | Wanyue Feng        | [@aquatique-plus](https://github.com/aquatique-plus) 
 ---
-
+## Citation
+Balamurugan, S., Dhanuka, S., Feng, W. & Turecki, S. (2026). ATACer: Mouse-Human Liver Regulatory Landscape - ATAC-seq Analysis. 
+[03-712 Final Course Project, Carnegie Mellon University] GitHub. https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-
 ## Course Project
 
 **03-713: Bioinformatics Data Integration Practicum**
