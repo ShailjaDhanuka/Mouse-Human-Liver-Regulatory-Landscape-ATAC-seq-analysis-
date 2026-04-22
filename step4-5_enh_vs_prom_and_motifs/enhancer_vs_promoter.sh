@@ -143,33 +143,89 @@ for prefix in shared_mouse shared_human unique_mouse unique_human; do
   done
 done
 
-echo "Running motif enrichment.."
+# COMPARISON 1: shared (foreground) vs unique (background)
+# finds what motifs are enriched at conserved open regions vs species-specific ones
+echo "Running motif enrichment: shared vs unique (with background).."
 
-# looping over each prefix of files to do motif analysis
-for prefix in shared_mouse shared_human unique_mouse unique_human; do 
+for type in promoter enhancer; do
 
-  # fail safe -- if bed file is empty, skipping motif analysis
-  for type in promoter enhancer; do
-    bed="${prefix}_${type}_peaks.bed"
-    if [[ ! -s "$bed" ]]; then
-      echo "Skipping motif analysis for $bed (empty)"
-      continue
-    fi
+  # first finding enriched motifs in mouse promoters / enhancers
+  fg="shared_mouse_${type}_peaks.bed"
+  bg="unique_mouse_${type}_peaks.bed"
 
-    if [[ $prefix == "shared_human" || $prefix == "unique_human" ]]; then
-        genome=hg38
-    else
-        genome=mm10
-    fi
+  # checking that foreground and background sequences arent empty
+  if [[ ! -s "$fg" ]]; then
+    echo "Skipping $fg (empty)"
 
-    # calling motif enrichment function in homer centered 200bp around peak summits
-    # masking repetitive/low complexity sequences
-    findMotifsGenome.pl "$bed" $genome \
-        $OUT_DIR/${prefix}_${type}_motifs/ \
+  elif [[ ! -s "$bg" ]]; then
+    echo "Skipping $fg (background $bg empty)"
+
+  else
+    findMotifsGenome.pl "$fg" mm10 \
+        $OUT_DIR/shared_vs_unique_mouse_${type}_motifs/ \
         -size 200 -mask \
+        -bg "$bg" -useNewBg \
         -preparsedDir $LOCAL/homerRun/preparsed
+  fi
 
-  done
+  # now finding enriched motifs in human promoters / enhancers
+  fg="shared_human_${type}_peaks.bed"
+  bg="unique_human_${type}_peaks.bed"
+
+  # checking that foreground and background arent empty
+  if [[ ! -s "$fg" ]]; then
+    echo "Skipping $fg (empty)"
+
+  elif [[ ! -s "$bg" ]]; then
+    echo "Skipping $fg (background $bg empty)"
+
+  else
+    findMotifsGenome.pl "$fg" hg38 \
+        $OUT_DIR/shared_vs_unique_human_${type}_motifs/ \
+        -size 200 -mask \
+        -bg "$bg" -useNewBg \
+        -preparsedDir $LOCAL/homerRun/preparsed
+  fi
+
+done
+
+# COMPARISON 2: unique promoters (fg) vs unique enhancers (bg)
+# Finding what motifs distinguish species-specific promoters from species-specific enhancers
+echo "Running motif enrichment: unique promoters vs unique enhancers (with background).."
+
+for species in mouse human; do
+  [[ $species == "human" ]] && genome=hg38 || genome=mm10
+
+  fg="unique_${species}_promoter_peaks.bed"
+  bg="unique_${species}_enhancer_peaks.bed"
+
+  if [[ ! -s "$fg" ]]; then
+    echo "Skipping $fg (empty)"
+  elif [[ ! -s "$bg" ]]; then
+    echo "Skipping $fg (background $bg empty)"
+  else
+    findMotifsGenome.pl "$fg" $genome \
+        $OUT_DIR/unique_${species}_promoter_motifs/ \
+        -size 200 -mask \
+        -bg "$bg" -useNewBg \
+        -preparsedDir $LOCAL/homerRun/preparsed
+  fi
+
+  fg="unique_${species}_enhancer_peaks.bed"
+  bg="unique_${species}_promoter_peaks.bed"
+
+  if [[ ! -s "$fg" ]]; then
+    echo "Skipping $fg (empty)"
+  elif [[ ! -s "$bg" ]]; then
+    echo "Skipping $fg (background $bg empty)"
+  else
+    findMotifsGenome.pl "$fg" $genome \
+        $OUT_DIR/unique_${species}_enhancer_motifs/ \
+        -size 200 -mask \
+        -bg "$bg" -useNewBg \
+        -preparsedDir $LOCAL/homerRun/preparsed
+  fi
+
 done
 
 echo "HOMER done! Results in $OUT_DIR"
