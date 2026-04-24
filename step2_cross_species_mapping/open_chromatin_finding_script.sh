@@ -39,9 +39,33 @@ zcat "$HUMAN_ATAC" | sort -k1,1 -k2,2n > "$OUTDIR/human_atac.bed"
 bedtools intersect -a "$OUTDIR/mouse_to_human_orthologs.bed" -b "$OUTDIR/human_atac.bed" -u -sorted > "$OUTDIR/mouse_shared_in_human.humanCoords.bed"
 bedtools intersect -a "$OUTDIR/human_to_mouse_orthologs.bed" -b "$OUTDIR/mouse_atac.bed" -u -sorted > "$OUTDIR/human_shared_in_mouse.mouseCoords.bed"
 
-# 3. species-specific but ortholog exists
-bedtools intersect -a "$OUTDIR/mouse_to_human_orthologs.bed" -b "$OUTDIR/human_atac.bed" -v -sorted > "$OUTDIR/mouse_open_human_closed.humanCoords.bed"
-bedtools intersect -a "$OUTDIR/human_to_mouse_orthologs.bed" -b "$OUTDIR/mouse_atac.bed" -v -sorted > "$OUTDIR/human_open_mouse_closed.mouseCoords.bed"
+# 3. species-specific but ortholog exists (and is closed)
+
+# mouse open, human closed -- keeping mouse coordinates
+# finding mouse ATAC regions whose liftover overlaps human ATAC (open in human)
+bedtools intersect \
+  -a "$OUTDIR/mouse_to_human_orthologs.bed" \
+  -b "$OUTDIR/human_atac.bed" \
+  -v -sorted > "$OUTDIR/human_closed_orthologs.bed"
+
+# mapping back to original mouse coordinates to get species specific OCRs with closed ortholog
+bedtools intersect \
+  -a "$OUTDIR/mouse_atac.bed" \
+  -b "$OUTDIR/human_closed_orthologs.bed" \
+  -u -sorted > "$OUTDIR/mouse_open_human_closed.mouseCoords.bed"
+
+# human open, mouse closed -- keeping human coordinates
+bedtools intersect \
+  -a "$OUTDIR/human_to_mouse_orthologs.bed" \
+  -b "$OUTDIR/mouse_atac.bed" \
+  -v -sorted > "$OUTDIR/mouse_closed_orthologs.bed"
+
+# mapping back to original human coordinates to get species specific OCRs with closed ortholog
+bedtools intersect \
+  -a "$OUTDIR/human_atac.bed" \
+  -b "$OUTDIR/mouse_closed_orthologs.bed" \
+  -u -sorted > "$OUTDIR/human_open_mouse_closed.humanCoords.bed"
+
 
 # 4. unmappable / no ortholog
 comm -23 <(cut -f4 "$OUTDIR/mouse_atac.bed" | sort) \
