@@ -23,8 +23,8 @@ def count_peaks(bed_dir):
         "mouse_atac": "mouse_atac.bed",
         "mouse_shared_in_human": "mouse_shared_in_human.humanCoords.bed",
         "human_shared_in_mouse": "human_shared_in_mouse.mouseCoords.bed",
-        "mouse_open_human_closed": "mouse_open_human_closed.humanCoords.bed",
-        "human_open_mouse_closed": "human_open_mouse_closed.mouseCoords.bed",
+        "mouse_open_human_closed": "mouse_open_human_closed.mouseCoords.bed",
+        "human_open_mouse_closed": "human_open_mouse_closed.humanCoords.bed",
         "mouse_no_ortholog": "mouse_no_ortholog.mouseCoords.bed",
         "human_no_ortholog": "human_no_ortholog.humanCoords.bed"
     }

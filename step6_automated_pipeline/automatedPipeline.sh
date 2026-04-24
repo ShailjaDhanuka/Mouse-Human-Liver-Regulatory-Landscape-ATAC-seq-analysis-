@@ -468,8 +468,8 @@ if should_run 2; then
         "BED files (step 2 - shared/unique peaks output) in $OUTPUT_DIR/open_chrom/" \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed"
 
@@ -478,16 +478,16 @@ if should_run 2; then
     for bed in \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed"; do
+        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.humanCoords.bed"; do
         assert_valid_bed "$bed" "BED file (step 2 - shared/unique peaks output)" 1
     done
 
     # count peaks in each category and print a summary
     MOUSE_SHARED=$(wc -l < "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed")
     HUMAN_SHARED=$(wc -l < "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed")
-    MOUSE_UNIQUE=$(wc -l < "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed")
-    HUMAN_UNIQUE=$(wc -l < "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed")
+    MOUSE_UNIQUE=$(wc -l < "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.mouseCoords.bed")
+    HUMAN_UNIQUE=$(wc -l < "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.humanCoords.bed")
     MOUSE_NO_ORTHO=$(wc -l < "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed")
     HUMAN_NO_ORTHO=$(wc -l < "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed")
 
@@ -511,8 +511,8 @@ else
             "BED files (step 2 - shared/unique peaks output) must be in $OUTPUT_DIR/open_chrom/ when skipping step 2" \
             "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
             "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
-            "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
-            "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed" \
+            "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.mouseCoords.bed" \
+            "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.humanCoords.bed" \
             "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed" \
             "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed"
     fi
@@ -532,8 +532,8 @@ if should_run 3; then
         "BED files (step 2 - shared/unique peaks output) required in $OUTPUT_DIR/open_chrom/" \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed"
 
@@ -599,8 +599,8 @@ if should_run 4 || should_run 5; then
         "BED files (step 2 - shared/unique peaks output) required in $OUTPUT_DIR/open_chrom/" \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed"
 
@@ -609,8 +609,8 @@ if should_run 4 || should_run 5; then
     bash "$REPO_DIR/step4-5_enh_vs_prom_and_motifs/enhancer_vs_promoter.sh" \
         "$OUTPUT_DIR/open_chrom/mouse_shared_in_human.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_shared_in_mouse.mouseCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.humanCoords.bed" \
-        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/mouse_open_human_closed.mouseCoords.bed" \
+        "$OUTPUT_DIR/open_chrom/human_open_mouse_closed.humanCoords.bed" \
         "$OUTPUT_DIR/open_chrom/mouse_no_ortholog.mouseCoords.bed" \
         "$OUTPUT_DIR/open_chrom/human_no_ortholog.humanCoords.bed" \
         "$OUTPUT_DIR/homer"

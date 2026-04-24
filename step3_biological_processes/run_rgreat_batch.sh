@@ -84,7 +84,7 @@ manifest <- list(
     label  = "mouse_shared_in_human"
   ),
   list(
-    path   = file.path(INDIR, "mouse_open_human_closed.humanCoords.bed"),
+    path   = file.path(INDIR, "mouse_open_human_closed.mouseCoords.bed"),
     genome = "hg38",
     label  = "mouse_open_human_closed"
   ),
@@ -99,7 +99,7 @@ manifest <- list(
     label  = "human_shared_in_mouse"
   ),
   list(
-    path   = file.path(INDIR, "human_open_mouse_closed.mouseCoords.bed"),
+    path   = file.path(INDIR, "human_open_mouse_closed.humanCoords.bed"),
     genome = "mm10",
     label  = "human_open_mouse_closed"
   ),
