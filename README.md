@@ -5,12 +5,12 @@
 
 ## Overview
 
-This project creates a pipeline called ATACer and investigates the conservation of transcriptional regulatory activity between human and mouse liver tissue using open chromatin (ATAC-seq) data. We map regulatory elements across species, classify them as enhancers or promoters, identify their biological function, and discover enriched sequence motifs — all tied together in ATACer.
+For our project, we created a pipeline called ATACer that investigates the conservation of transcriptional regulatory activity between human and mouse liver tissue using open chromatin (ATAC-seq) data. We map regulatory elements across species, classify them as enhancers or promoters, identify their biological function, and discover enriched sequence motifs — all tied together in ATACer.
 
 **Core research questions:**
-- To what extent is transcriptional regulatory activity conserved between human and mouse?
+- To what extent is transcriptional regulatory activity conserved between human and mouse liver tissue?
 - Do enhancers and promoters differ in their degree of cross-species conservation?
-- Does the transcriptional regulatory code differ between species and between element types?
+- Does transcriptional regulatory code differ between species and/or between element types?
 - What biological processes are regulated by shared vs. species-specific elements?
 
 
@@ -21,12 +21,12 @@ This project creates a pipeline called ATACer and investigates the conservation 
 ## Repository Structure
 
 ```
-├── sampleOutputs                    ← Example files of summarized pipeline outputs
-├── step1_quality_evaluation         ← Quality assessment of ATAC-seq datasets
-├── step1_cross_species_mapping/     ← Liftover & ortholog identification (halLiftover/HALPER)
-├── step2_biological_processes/      ← Gene ontology enrichment (rGREAT)
-├── step3-4_enh_vs_prom_and_motifs   ← Regulatory element classification + TF motif analysis (HOMER)
-├── step5_automated_pipeline/        ← End-to-end automated pipeline
+├── sampleOutputs/                   ← Example files of summarized pipeline outputs
+├── step1_quality_evaluation/        ← Quality assessment of ATAC-seq datasets
+├── step2_cross_species_mapping/     ← Liftover & ortholog identification (halLiftover/HALPER)
+├── step3_biological_processes/      ← Gene ontology enrichment (rGREAT)
+├── step4-5_enh_vs_prom_and_motifs   ← Regulatory element classification + TF motif analysis (HOMER)
+├── step6_automated_pipeline/        ← End-to-end automated pipeline
 ├── README.md                        ← Pipeline Details
 ├── config.sh                        ← Configuration file 
 
@@ -37,35 +37,35 @@ This project creates a pipeline called ATACer and investigates the conservation 
 ## Pipeline Design
 
 ### Step 1 — Quality Evaluation
-Quality assessment outputs for ATAC-seq data sets considered for creation of this pipeline. Select the highest-quality dataset for downstream analysis based on peak count, FRiP score, and signal enrichment.
+Quality assessment of ATAC-seq data sets were considered when creating this pipeline. Users should select the highest-quality ATAC-seq dataset for pipeline use, considering peak counts, FRiP score, and signal enrichment. The following ENCODE ATAC-seq QC pipeline is recommended. ATACer does not perform quality assessments (step 1).
 
 **Tools:** [ENCODE-DCC atac-seq-pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline)
 
 ---
 
 ### Step 2 — Cross-Species Mapping
-Map open chromatin regions between human and mouse genomes using halLiftover and HALPER. Classify regions as shared (ortholog is open in the other species) or species-specific (ortholog is closed).
+Map open chromatin regions between human and mouse genomes using halLiftover and HALPER. Classify regions as shared (ortholog is open in the other species) or species-specific (ortholog is closed or no ortholog found).
 
 **Tools:** [halLiftover](https://github.com/ComparativeGenomicsToolkit/hal), [HALPER](https://github.com/pfenninglab/halLiftover-postprocessing), [bedtools](https://bedtools.readthedocs.io/en/latest/)
 
 ---
 
 ### Step 3 — Biological Process Enrichment
-Run GO/pathway enrichment on all open chromatin regions, shared regions, and species-specific regions to identify what biological processes are regulated and whether they are conserved.
+Run GO biolgical pathway enrichment on all open chromatin regions from mouse and human liver, shared regions, and species-specific regions to identify what biological processes are regulated and whether they are conserved.
 
 **Tools:** [rGREAT](https://github.com/jokergoo/rGREAT)
 
 ---
 
 ### Step 4 — Enhancer and Promoter Classification
-Partition open chromatin regions into likely enhancers and promoters. Compare what fraction of each element type is conserved across species.
+Partition open chromatin regions into likely enhancers and promoters. Compare what fraction of each element type is present in species and also conserved across species.
 
 **Tools:** [HOMER](http://homer.ucsd.edu/homer/)
 
 ---
 
 ### Step 5 — Motif Analysis
-Discover over-represented sequence motifs in enhancers, promoters, shared regions, and species-specific regions using HOMER.
+Discover over-represented sequence motifs in species-specific and shared enhancers and promoters regions using HOMER.
 
 **Tools:** [HOMER](http://homer.ucsd.edu/homer/)
 
@@ -88,7 +88,7 @@ bash step6_automated_pipeline/automatedPipeline.sh \
 ---
 
 ## Pipeline Instructions & Usage
-### Step 1: Clone this repo to your working folder.
+### Step 1: Clone the ATACer repo to your working directory.
 To use this pipeline, you will have to clone the repository into any desired directory.
 ```bash
 git clone https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-.git 
@@ -97,10 +97,13 @@ git clone https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landsca
 ### Step 2: Dependencies and Installation Instructions
 Ensure all necessary dependencies and environments are installed/created. Then update the config.sh file with file paths to your conda source and specific environments. This includes:
 
-- halLiftover and HALPER (install in its own hal environment) - [Installation Instructions](https://github.com/pfenninglab/halLiftover-postprocessing/blob/master/hal_install_instructions.md)
-- rGreat (install in its own rGreat environment) - [Installation Instructions](https://github.com/jokergoo/rGREAT/blob/master/README.md)
-- HOMER (install in its own HOMER environment) - easiest to use bioconda to install (must have bioconda channel)
-  - Further installation methods - [Installation Instructions](http://homer.ucsd.edu/homer/introduction/install.html)
+- halLiftover and HALPER - [Installation Instructions](https://github.com/pfenninglab/halLiftover-postprocessing/blob/master/hal_install_instructions.md)
+  - Create a conda environment and follow the linked instructions to install HAL in the environment
+- rGreat - [Installation Instructions](https://github.com/jokergoo/rGREAT/blob/master/README.md) 
+  - Create another conda environment and follow the linked instructions to install rGreat in the environment
+- HOMER - [Installation Instructions](http://homer.ucsd.edu/homer/introduction/install.html)
+  - Create third conda environment and follow the linked instructions to install HOMER in the environment
+  - Further installation methods -- can use bioconda to install homer as well, which may be an easier method if you have the bioconda channel
 - bedtools -- [Installation Instructions](https://bedtools.readthedocs.io/en/latest/content/installation.html)
 
 ### Step 3: Prepare your data
