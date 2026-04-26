@@ -1,0 +1,20 @@
+Pipeline started: Sat Apr 25 21:55:11 EDT 2026
+Mouse ATAC:  /ocean/projects/bio230007p/ikaplow/MouseAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+Human ATAC:  /ocean/projects/bio230007p/ikaplow/HumanAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+Cactus file: /ocean/projects/bio230007p/ikaplow/Alignments/10plusway-master.hal
+Output dir:  /ocean/projects/bio230007p/sturecki/project/pipelineTest2
+
+[SKIPPED] Step 1: ortholog mapping (halLiftover and HALPER) (Sat Apr 25 21:55:12 EDT 2026)
+[PLANNED] Step 2: shared/unique peaks (bedtools) (Sat Apr 25 21:55:12 EDT 2026)
+[PLANNED] Step 3: gene ontology (rGREAT) (Sat Apr 25 21:55:12 EDT 2026)
+[PLANNED] Step 4: enhancer/promoter classification (HOMER annotatePeaks) (Sat Apr 25 21:55:12 EDT 2026)
+[PLANNED] Step 5: motif analysis (HOMER findMotifsGenome) (Sat Apr 25 21:55:12 EDT 2026)
+[PLANNED] Step 6: summary and plots (Python) (Sat Apr 25 21:55:12 EDT 2026)
+[PASSED] Step 2: shared/unique peaks done. mouse peaks shared in human: 38051 human peaks shared in mouse: 34439
+     unique mouse peaks: 34611 unique human peaks: 36568 (Sat Apr 25 21:55:18 EDT 2026)
+[PASSED] Step 3: gene ontology done. 6 categorized GO result files and 2 full-peak GO result files produced (Sat Apr 25 22:07:07 EDT 2026)
+[PASSED] Step 4: enhancer/promoter classification done (Sun Apr 26 03:13:49 EDT 2026)
+[PASSED] Step 5: motif analysis done (Sun Apr 26 03:13:49 EDT 2026)
+[PASSED] Step 6: summary and plots done (Sun Apr 26 03:13:58 EDT 2026)
+
+pipeline finished: Sun Apr 26 03:13:58 EDT 2026

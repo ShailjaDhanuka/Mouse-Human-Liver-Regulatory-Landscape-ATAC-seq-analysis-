@@ -1,0 +1,226 @@
+pipeline summary - comparative open chromatin analysis
+------------------------------------------------------------
+
+1. peak mapping results
+------------------------------------------------------------
+
+total human peaks: 128816
+total mouse peaks: 133410
+
+mouse peaks with human ortholog: 72662
+human peaks with mouse ortholog: 71007
+
+mouse peaks shared (open in both): 38051 (28.5% of mouse peaks)
+human peaks shared (open in both): 34439 (26.7% of human peaks)
+mouse open / human closed: 34611
+human open / mouse closed: 36568
+mouse peaks with no ortholog: 53571
+human peaks with no ortholog: 49500
+
+2. top enriched biological processes - categorized peaks (rGREAT GO:BP)
+------------------------------------------------------------
+note: p_adj = 0.00e+00 indicates floating point underflow (p-value too small to represent -- extremely significant)
+
+mouse shared in human (human coords)
+  GO:0034377  plasma lipoprotein particle assembly  fold=3.71  p_adj=0.00e+00
+  GO:1901532  regulation of hematopoietic progenitor cell d  fold=2.47  p_adj=0.00e+00
+  GO:0030224  monocyte differentiation  fold=2.35  p_adj=0.00e+00
+  GO:0006094  gluconeogenesis  fold=2.13  p_adj=0.00e+00
+  GO:0010907  positive regulation of glucose metabolic proc  fold=2.13  p_adj=0.00e+00
+
+human shared in mouse (mouse coords)
+  GO:0034377  plasma lipoprotein particle assembly  fold=4.32  p_adj=0.00e+00
+  GO:0042776  proton motive force-driven mitochondrial ATP   fold=2.98  p_adj=0.00e+00
+  GO:1902686  mitochondrial outer membrane permeabilization  fold=2.84  p_adj=0.00e+00
+  GO:0035794  positive regulation of mitochondrial membrane  fold=2.82  p_adj=0.00e+00
+  GO:0015986  proton motive force-driven ATP synthesis  fold=2.73  p_adj=0.00e+00
+
+mouse open / human closed
+  GO:0034380  high-density lipoprotein particle assembly  fold=6.32  p_adj=0.00e+00
+  GO:0034372  very-low-density lipoprotein particle remodel  fold=5.12  p_adj=0.00e+00
+  GO:0034370  triglyceride-rich lipoprotein particle remode  fold=4.96  p_adj=0.00e+00
+  GO:0043380  regulation of memory T cell differentiation  fold=4.88  p_adj=0.00e+00
+  GO:0043379  memory T cell differentiation  fold=4.73  p_adj=0.00e+00
+
+human open / mouse closed
+  GO:0097021  lymphocyte migration into lymphoid organs  fold=3.24  p_adj=0.00e+00
+  GO:0033033  negative regulation of myeloid cell apoptotic  fold=3.0  p_adj=0.00e+00
+  GO:0045655  regulation of monocyte differentiation  fold=2.79  p_adj=0.00e+00
+  GO:0045589  regulation of regulatory T cell differentiati  fold=2.37  p_adj=0.00e+00
+  GO:0030224  monocyte differentiation  fold=2.36  p_adj=0.00e+00
+
+mouse no ortholog
+  GO:1901685  glutathione derivative metabolic process  fold=10.14  p_adj=0.00e+00
+  GO:1901687  glutathione derivative biosynthetic process  fold=10.14  p_adj=0.00e+00
+  GO:0046687  response to chromate  fold=9.24  p_adj=0.00e+00
+  GO:0033986  response to methanol  fold=8.96  p_adj=0.00e+00
+  GO:0002396  MHC protein complex assembly  fold=7.6  p_adj=0.00e+00
+
+human no ortholog
+  GO:0060696  regulation of phospholipid catabolic process  fold=4.69  p_adj=0.00e+00
+  GO:0034384  high-density lipoprotein particle clearance  fold=3.85  p_adj=0.00e+00
+  GO:0043691  reverse cholesterol transport  fold=3.37  p_adj=0.00e+00
+  GO:0010867  positive regulation of triglyceride biosynthe  fold=3.17  p_adj=0.00e+00
+  GO:0044406  adhesion of symbiont to host  fold=3.12  p_adj=0.00e+00
+
+2b. top enriched biological processes - all peaks (rGREAT GO:BP)
+------------------------------------------------------------
+note: p_adj = 0.00e+00 indicates floating point underflow (p-value too small to represent -- extremely significant)
+
+all mouse ATAC peaks
+  GO:0071332  cellular response to fructose stimulus  fold=6.45  p_adj=0.00e+00
+  GO:0010901  regulation of very-low-density lipoprotein pa  fold=5.93  p_adj=0.00e+00
+  GO:0034384  high-density lipoprotein particle clearance  fold=5.57  p_adj=0.00e+00
+  GO:0009136  purine nucleoside diphosphate biosynthetic pr  fold=5.4  p_adj=0.00e+00
+  GO:0009180  purine ribonucleoside diphosphate biosyntheti  fold=5.4  p_adj=0.00e+00
+
+all human ATAC peaks
+  GO:0060696  regulation of phospholipid catabolic process  fold=3.2  p_adj=0.00e+00
+  GO:0060574  intestinal epithelial cell maturation  fold=3.19  p_adj=0.00e+00
+  GO:2000646  positive regulation of receptor catabolic pro  fold=3.16  p_adj=0.00e+00
+  GO:2001198  regulation of dendritic cell differentiation  fold=3.11  p_adj=0.00e+00
+  GO:0010713  negative regulation of collagen metabolic pro  fold=3.03  p_adj=0.00e+00
+
+3. promoters vs enhancers
+------------------------------------------------------------
+
+shared peaks (human coords)
+  promoters: 14518 (71.9%)
+  enhancers: 5683 (28.1%)
+  total: 20201
+
+shared peaks (mouse coords)
+  promoters: 13430 (69.1%)
+  enhancers: 6008 (30.9%)
+  total: 19438
+
+human-unique peaks
+  promoters: 4010 (15.5%)
+  enhancers: 21900 (84.5%)
+  total: 25910
+
+mouse-unique peaks
+  promoters: 3381 (15.4%)
+  enhancers: 18620 (84.6%)
+  total: 22001
+
+4. top enriched known motifs in promoters and enhancers
+------------------------------------------------------------
+
+shared human promoters
+  ZNF91(Zf)/HEK-ZNF91.HA-ChIP-Seq(GSE162571)/Ho  p=9.999999999999999e-57
+  PRDM9(Zf)/Testis-DMC1-ChIP-Seq(GSE35498)/Home  p=1e-40
+  YY1(Zf)/Promoter/Homer  p=1e-37
+  Zfp281(Zf)/ES-Zfp281-ChIP-Seq(GSE81042)/Homer  p=1.0000000000000001e-28
+  ZNF652/HepG2-ZNF652.Flag-ChIP-Seq(Encode)/Hom  p=1.0000000000000001e-23
+
+shared human enhancers
+  CTCF(Zf)/CD4+-CTCF-ChIP-Seq(Barski_et_al.)/Ho  p=1e-44
+  BORIS(Zf)/K562-CTCFL-ChIP-Seq(GSE32465)/Homer  p=1.0000000000000001e-23
+  ZNF652/HepG2-ZNF652.Flag-ChIP-Seq(Encode)/Hom  p=1e-10
+  NFATC2(RHD)/Islets-NFATC2-ChIP-Seq(GSE158496)  p=1e-08
+  BHLHA15(bHLH)/NIH3T3-BHLHB8.HA-ChIP-Seq(GSE11  p=1e-05
+
+shared mouse promoters
+  YY1(Zf)/Promoter/Homer  p=1e-40
+  PAX3:FKHR-fusion(Paired,Homeobox)/Rh4-PAX3:FK  p=1e-36
+  Tgif1(Homeobox)/mES-Tgif1-ChIP-Seq(GSE55404)/  p=1e-36
+  Atoh7(bHLH)/Retina-Atoh7-CutnRun(GSE156756)/H  p=1e-35
+  Tbox:Smad(T-box,MAD)/ESCd5-Smad2_3-ChIP-Seq(G  p=1e-35
+
+shared mouse enhancers
+  CTCF(Zf)/CD4+-CTCF-ChIP-Seq(Barski_et_al.)/Ho  p=1e-36
+  BORIS(Zf)/K562-CTCFL-ChIP-Seq(GSE32465)/Homer  p=9.999999999999999e-26
+  Atoh1(bHLH)/Cerebellum-Atoh1-ChIP-Seq(GSE2211  p=1e-17
+  Twist2(bHLH)/Myoblast-Twist2.Ty1-ChIP-Seq(GSE  p=1e-16
+  Tcf21(bHLH)/ArterySmoothMuscle-Tcf21-ChIP-Seq  p=1e-16
+
+human-unique promoters
+  KLF17(Zf)/2cell-Klf17-CutnTag(GSE211845)/Home  p=1e-127
+  Klf15(Zf)/Liver-Klf15-ChIP-Seq(GSE166083)/Hom  p=1.0000000000000001e-112
+  Klf9(Zf)/GBM-Klf9-ChIP-Seq(GSE62211)/Homer  p=1e-101
+  KLF3(Zf)/MEF-Klf3-ChIP-Seq(GSE44748)/Homer  p=1e-87
+  Sp5(Zf)/mES-Sp5.Flag-ChIP-Seq(GSE72989)/Homer  p=1e-77
+
+human-unique enhancers
+  CTCF(Zf)/CD4+-CTCF-ChIP-Seq(Barski_et_al.)/Ho  p=0.0
+  BORIS(Zf)/K562-CTCFL-ChIP-Seq(GSE32465)/Homer  p=0.0
+  ZBED2(Zf)/SUIT2-ZBED2.HA-ChIP-Seq(GSE141606)/  p=0.0
+  Pitx1:Ebox(Homeobox,bHLH)/Hindlimb-Pitx1-ChIP  p=1e-177
+  Tbox:Smad(T-box,MAD)/ESCd5-Smad2_3-ChIP-Seq(G  p=1e-175
+
+mouse-unique promoters
+  NRF(NRF)/Promoter/Homer  p=9.999999999999999e-85
+  PRDM10(Zf)/HEK293-PRDM10.eGFP-ChIP-Seq(Encode  p=1e-80
+  KLF1(Zf)/HUDEP2-KLF1-CutnRun(GSE136251)/Homer  p=1e-77
+  Klf15(Zf)/Liver-Klf15-ChIP-Seq(GSE166083)/Hom  p=1e-67
+  Rfx5(HTH)/GM12878-Rfx5-ChIP-Seq(GSE31477)/Hom  p=1e-47
+
+mouse-unique enhancers
+  CTCF(Zf)/CD4+-CTCF-ChIP-Seq(Barski_et_al.)/Ho  p=1e-183
+  EBF(EBF)/proBcell-EBF-ChIP-Seq(GSE21978)/Home  p=1.0000000000000001e-159
+  PPARa(NR),DR1/Liver-Ppara-ChIP-Seq(GSE47954)/  p=1e-141
+  BORIS(Zf)/K562-CTCFL-ChIP-Seq(GSE32465)/Homer  p=1e-120
+  PRDM10(Zf)/HEK293-PRDM10.eGFP-ChIP-Seq(Encode  p=1e-111
+
+5. top de novo motifs in promoters and enhancers (HOMER)
+------------------------------------------------------------
+
+shared human promoters
+  1-TCCKCCAYCK  consensus=TCCKCCAYCK  p=1e-182
+  2-CCTCAGGAAT  consensus=CCTCAGGAAT  p=1e-151
+  3-GCTGCTGCCG  consensus=GCTGCTGCCG  p=1e-141
+  4-GAGGSCAAAA  consensus=GAGGSCAAAA  p=1e-130
+  5-CGACGAACGC  consensus=CGACGAACGC  p=1e-129
+
+shared human enhancers
+  1-GCCATCYAGT  consensus=GCCATCYAGT  p=1e-63
+  2-GMACATTACT  consensus=GMACATTACT  p=1e-52
+  3-CCTTTCCCCT  consensus=CCTTTCCCCT  p=1e-50
+  4-GGCCCTTCGA  consensus=GGCCCTTCGA  p=1e-49
+  5-GGGCTGGAGG  consensus=GGGCTGGAGG  p=1e-48
+
+shared mouse promoters
+  1-ACCACCWCCA  consensus=ACCACCWCCA  p=1e-176
+  2-TCCGTCCGTC  consensus=TCCGTCCGTC  p=1e-171
+  3-GCCCATAGCG  consensus=GCCCATAGCG  p=1e-141
+  4-GTCGGCCCGT  consensus=GTCGGCCCGT  p=1e-130
+  5-GTCGACTCGG  consensus=GTCGACTCGG  p=1e-128
+
+shared mouse enhancers
+  1-GCGATTTGCA  consensus=GCGATTTGCA  p=1e-71
+  2-ATTCCATGCA  consensus=ATTCCATGCA  p=1e-62
+  3-GCGCCTTAAA  consensus=GCGCCTTAAA  p=1e-56
+  4-GCGCTCATCC  consensus=GCGCTCATCC  p=1e-55
+  5-AGGGTGCGAA  consensus=AGGGTGCGAA  p=1e-49
+
+human-unique promoters
+  1-GTCACGTGAC  consensus=GTCACGTGAC  p=1e-155
+  2-CTTCCGGTSC  consensus=CTTCCGGTSC  p=1e-113
+  3-CCACCATCTT  consensus=CCACCATCTT  p=1e-110
+  4-CGCTGATTGG  consensus=CGCTGATTGG  p=1e-109
+  5-ATTGGTCGGA  consensus=ATTGGTCGGA  p=1e-102
+
+human-unique enhancers
+  1-CAGAGGGCAC  consensus=CAGAGGGCAC  p=1e-905
+  2-TCAAAGTCCA  consensus=TCAAAGTCCA  p=1e-526
+  3-TCAGCCCCAG  consensus=TCAGCCCCAG  p=1e-523
+  4-CCACCAGGKG  consensus=CCACCAGGKG  p=1e-519
+  5-CCTGGCAGCC  consensus=CCTGGCAGCC  p=1e-422
+
+mouse-unique promoters
+  1-CACCGCCCGC  consensus=CACCGCCCGC  p=1e-177
+  2-CCAACTTTTC  consensus=CCAACTTTTC  p=1e-167
+  3-GTTTGGCTAG  consensus=GTTTGGCTAG  p=1e-154
+  4-CCCCAACCCC  consensus=CCCCAACCCC  p=1e-149
+  5-TCTCTAAGGA  consensus=TCTCTAAGGA  p=1e-116
+
+mouse-unique enhancers
+  1-CCCCYKGKTG  consensus=CCCCYKGKTG  p=1e-512
+  2-GCTGGCCCTG  consensus=GCTGGCCCTG  p=1e-504
+  3-TTCCACGTAG  consensus=TTCCACGTAG  p=1e-348
+  4-TTTCTTCCCT  consensus=TTTCTTCCCT  p=1e-326
+  5-CCAGCCACTG  consensus=CCAGCCACTG  p=1e-312
+
+------------------------------------------------------------
+end of summary
