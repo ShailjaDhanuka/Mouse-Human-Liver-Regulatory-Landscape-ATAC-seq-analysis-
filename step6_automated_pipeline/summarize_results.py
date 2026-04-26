@@ -92,10 +92,10 @@ def get_top_motifs(homer_dir, n=5):
     # read the top known motifs from each HOMER knownResults.txt file
     results = {}
     subdirs = [
-        "shared_human_enhancer_motifs",
-        "shared_mouse_enhancer_motifs",
-        "shared_human_promoter_motifs",
-        "shared_mouse_promoter_motifs",
+        "shared_vs_unique_human_enhancer_motifs",
+        "shared_vs_unique_mouse_enhancer_motifs",
+        "shared_vs_unique_human_promoter_motifs",
+        "shared_vs_unique_mouse_promoter_motifs",
         "unique_human_enhancer_motifs",
         "unique_mouse_enhancer_motifs",
         "unique_human_promoter_motifs",
@@ -120,10 +120,10 @@ def get_top_denovo_motifs(homer_dir, n=5):
     # headers: >consensus  name  log-odds  log-p-value  0,  T:...,B:...,P:raw_pval
     results = {}
     subdirs = [
-        "shared_human_enhancer_motifs",
-        "shared_mouse_enhancer_motifs",
-        "shared_human_promoter_motifs",
-        "shared_mouse_promoter_motifs",
+        "shared_vs_unique_human_enhancer_motifs",
+        "shared_vs_unique_mouse_enhancer_motifs",
+        "shared_vs_unique_human_promoter_motifs",
+        "shared_vs_unique_mouse_promoter_motifs",
         "unique_human_enhancer_motifs",
         "unique_mouse_enhancer_motifs",
         "unique_human_promoter_motifs",
@@ -431,10 +431,10 @@ def write_summary(counts, pe_counts, go_results, motif_results, denovo_motif_res
         f.write("-" * 60 + "\n\n")
 
         motif_labels = [
-            ("shared_human_promoter_motifs", "shared human promoters"),
-            ("shared_human_enhancer_motifs", "shared human enhancers"),
-            ("shared_mouse_promoter_motifs", "shared mouse promoters"),
-            ("shared_mouse_enhancer_motifs", "shared mouse enhancers"),
+            ("shared_vs_unique_human_promoter_motifs", "shared human promoters"),
+            ("shared_vs_unique_human_enhancer_motifs", "shared human enhancers"),
+            ("shared_vs_unique_mouse_promoter_motifs", "shared mouse promoters"),
+            ("shared_vs_unique_mouse_enhancer_motifs", "shared mouse enhancers"),
             ("unique_human_promoter_motifs", "human-unique promoters"),
             ("unique_human_enhancer_motifs", "human-unique enhancers"),
             ("unique_mouse_promoter_motifs", "mouse-unique promoters"),
