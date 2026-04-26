@@ -29,6 +29,7 @@ For our project, we created a pipeline called ATACer that investigates the conse
 ├── step6_automated_pipeline/        ← End-to-end automated pipeline
 ├── README.md                        ← Pipeline Details
 ├── config.sh                        ← Configuration file 
+├── expected_fileNames.md            ← All expected file names for each step
 
 ```
 
