@@ -37,7 +37,7 @@ For our project, we created a pipeline called ATACer that investigates the conse
 ## Pipeline Design
 
 ### Step 1 — Quality Evaluation
-Quality assessment of ATAC-seq data sets were considered when creating this pipeline. Users should select the highest-quality ATAC-seq dataset for pipeline use, considering peak counts, FRiP score, and signal enrichment. The following ENCODE ATAC-seq QC pipeline is recommended. ATACer does not perform quality assessments (step 1).
+Quality assessment of ATAC-seq data sets were considered when creating this pipeline. Users should ensure they have high-quality ATAC-seq datasets before using the pipeline. The following ENCODE ATAC-seq QC pipeline is recommended for preprocessing raw ATAC reads. ATACer does not perform this step.
 
 **Tools:** [ENCODE-DCC atac-seq-pipeline](https://github.com/ENCODE-DCC/atac-seq-pipeline)
 
@@ -106,8 +106,10 @@ Ensure all necessary dependencies and environments are installed/created. Then u
   - Further installation methods -- can use bioconda to install homer as well, which may be an easier method if you have the bioconda channel
 - bedtools -- [Installation Instructions](https://bedtools.readthedocs.io/en/latest/content/installation.html)
 
-### Step 3: Prepare your data
-You need to have mouse and human ATAC-seq files, a Cactus HAL alignmemt file and your desired output folder prepared. If you have done mapping, open chromatin identification or GO enrichment, please follow the instructions here to make sure output files are placed correctly:
+### Step 3: Data Preparation
+You need to have mouse and human ATAC-seq narrowPeak.gz files, a Cactus HAL alignmemt file and your desired output folder prepared. 
+
+If you have completed any previous step and would like to skip them in the pipeline, please follow the structure below to make sure output files are placed correctly. Refer to [expected_outputs.md](expected_outputs.md) for specific file information and naming instructions.
 - halLiftover/HALPER output (ortholog mapping)-> `<output_dir>/mapping/`
 - BED files (open chrom identification) -> `<output_dir>/open_chrom/`
 - GO csv files (rGREAT result) -> `<output_dir>/gene_ontology/`
@@ -115,7 +117,7 @@ You need to have mouse and human ATAC-seq files, a Cactus HAL alignmemt file and
 
 
 ### Step 4: Run the scripts.
-This pipeline is able to perform 6 possible downstream analysis. You can designate the exact steps you want.
+ATACer is able to perform 6 possible analyses. You can designate the exact steps you want performed.
 - 1 = ortholog mapping (HALPER)
 - 2 = shared/unique peaks (bedtools)
 - 3 = gene ontology (rGREAT)
@@ -123,12 +125,12 @@ This pipeline is able to perform 6 possible downstream analysis. You can designa
 - 5 = motif analysis (HOMER findMotifsGenome)
 - 6 = summary and plots (Python)
 
-To run the pipeline on slurm, follow the instructions here:
+To run the full pipeline on slurm, follow the instructions here:
 ```bash
 cd /path/to/this/repo/step6_automated_pipelin
 sbatch automatedPipeline.sh <mouse_peaks> <human_peaks> <cactus_file> <output_dir>
 ```
-The default set for `start-step` and `end-step` is `1` and `6`, respectively. Here is an example of running the pipeline from step 2 to step 6 while skipping steps 3 & 4. You can replace the parameters with whatever you want in your own workflow.
+The default for `start-step` and `end-step` is `1` and `6`, respectively. Here is an example of running the pipeline from step 2 to step 6 while skipping steps 3 & 4. You can replace the parameters with whatever you want in your own workflow.
 ```bash
 sbatch automatedPipeline.sh <mouse_peaks> <human_peaks> <cactus_file> <output_dir> --start-step 2 --end-step 6 --skip 3,4
 ```
@@ -142,7 +144,7 @@ The required parameters are:
 ```bash
     <mouse_peaks> -> path to mouse ATAC-seq
     <human_peaks> -> path to human ATAC-seq
-    <cactus_file> -> path to cactus file
+    <cactus_file> -> path to Cactus file
     <output_dir>  -> path to output directory
 ```
 The optional parameters are:
@@ -152,13 +154,13 @@ The optional parameters are:
     --skip N,N,...    -> Skip specific steps e.g. --skip 3,4
 ```
 ## Summary Output
-The summarized output should be in your designated output directory in the summary directory. It has the following structure:
+The summarized output will be in your designated output directory under the summary subdirectory. It has the following structure:
 ```
-├── go_enrichment.png                ← GO enrichment results
-├── peak_counts.png                  ← unique/shared peak counting
-├── promoter_vs_enhancer.png         ← promoter/enhancer peak counting
-├── pipeline_summary.txt             ← summary of all the results
-├── stage_log.txt                    ← log file
+├── go_enrichment.png                ← top 5 GO enrichment bar plots
+├── peak_counts.png                  ← unique/shared peak bar plots
+├── promoter_vs_enhancer.png         ← promoter/enhancer peak bar plots
+├── pipeline_summary.txt             ← written summary of results
+├── stage_log.txt                    ← stage log for pipeline run 
 ```
 You can also go to the [sample output folder](./sampleOutputs/) for reference of what each file contains.
 
