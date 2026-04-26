@@ -118,12 +118,11 @@ If you have completed any previous step and would like to skip them in the pipel
 
 
 ### Step 4: Run the scripts.
-ATACer is able to perform 6 possible analyses. You can designate the exact steps you want performed.
+ATACer is able to perform 5 possible analyses. You can designate the exact steps you want performed.
 - 1 = ortholog mapping (HALPER)
 - 2 = shared/unique peaks (bedtools)
 - 3 = gene ontology (rGREAT)
-- 4 = enhancer/promoter classification (HOMER annotatePeaks)
-- 5 = motif analysis (HOMER findMotifsGenome)
+- 4 & 5 = enhancer/promoter classification (HOMER annotatePeaks) & motif analysis (HOMER findMotifsGenome)
 - 6 = summary and plots (Python)
 
 To run the full pipeline on slurm, follow the instructions here:
