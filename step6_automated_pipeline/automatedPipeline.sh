@@ -165,7 +165,6 @@ done
 # ============================================================
 
 # create all output folders upfront if they don't already exist so each step has somewhere to save results
-mkdir -p "$OUTPUT_DIR/logs"
 mkdir -p "$OUTPUT_DIR/mapping"        # step 1 outputs go here
 mkdir -p "$OUTPUT_DIR/open_chrom"     # step 2 outputs go here
 mkdir -p "$OUTPUT_DIR/gene_ontology"  # step 3 outputs go here
