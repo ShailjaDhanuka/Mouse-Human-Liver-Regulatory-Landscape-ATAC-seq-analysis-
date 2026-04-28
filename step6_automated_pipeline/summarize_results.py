@@ -75,7 +75,7 @@ def get_top_go_terms(go_dir, n=5):
         "human_allpeaks": "liver_human_GO_BP_allpeaks.csv"
     }
 
-    # filtering out csv files for only significant results (p val < 0.05
+    # filtering out csv files for only significant results (p val < 0.05)
     for label, filename in files.items():
         filepath = os.path.join(go_dir, filename)
         if os.path.exists(filepath):
