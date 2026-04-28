@@ -44,9 +44,9 @@ set -E
 #                                                                         motif enrichment)
 # mkdir -p "$OUTPUT_DIR/summary"        # step 6 outputs go here  (python summary file)
 
-# ============================================================
+
 # HOW TO RUN
-# ============================================================
+
 # Usage: sbatch automatedPipeline.sh \
 #         <mouse_peaks> \
 #         <human_peaks> \
@@ -97,9 +97,8 @@ set -E
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 6
 
-# ============================================================
+
 # CHECK INPUTS
-# ============================================================
 
 # make sure user gave us at least 4 arguments
 # if not, print a help message and exit
@@ -129,9 +128,7 @@ CACTUS_FILE="$3"   # cactus alignment hal file for cross-species mapping
 OUTPUT_DIR="$4"    # folder where all results will be saved
 shift 4            # move past the 4 required arguments to read optional flags
 
-# ============================================================
 # STEP CONTROL
-# ============================================================
 
 # default values - run all steps unless the user says otherwise
 START_STEP=1
@@ -162,9 +159,7 @@ while [[ "$#" -gt 0 ]]; do
     esac
 done
 
-# ============================================================
 # SETUP
-# ============================================================
 
 # create all output folders upfront if they don't already exist so each step has somewhere to save results
 mkdir -p "$OUTPUT_DIR/mapping"        # step 1 outputs go here
@@ -188,9 +183,7 @@ echo ""                          >> "$STAGE_LOG"
 module load anaconda3
 module load bedtools
 
-# ============================================================
 # TRAP
-# ============================================================
 
 # This variable tracks which step we are currently running
 # It gets updated before each step so if the pipeline crashes
@@ -229,9 +222,7 @@ cleanup_on_error() {
 # register the trap - cleanup_on_error will run automatically if any command fails
 trap cleanup_on_error ERR
 
-# ============================================================
 # HELPER FUNCTIONS
-# ============================================================
 
 # Returns true if a step should run, false if it should be skipped
 # Checks start step, end step, and skip list
@@ -341,9 +332,7 @@ assert_valid_bed() {
     echo "check passed: $file looks like a valid BED file ($lines peaks)"
 }
 
-# ============================================================
 # PRINT RUN PLAN
-# ============================================================
 
 # print summary of what will run and what will be skipped
 echo "-------------------------------------------"
@@ -386,9 +375,7 @@ fi
 
 echo "-------------------------------------------"
 
-# ============================================================
 # STEP 1 - ortholog mapping (HALPER)
-# ============================================================
 
 if should_run 1; then
 
@@ -440,9 +427,7 @@ else
     fi
 fi
 
-# ============================================================
 # STEP 2 - shared/unique peaks (bedtools)
-# ============================================================
 
 if should_run 2; then
     CURRENT_STEP="step 2 - shared/unique peaks (bedtools)"
@@ -519,9 +504,7 @@ else
     fi
 fi
 
-# ============================================================
 # STEP 3 - gene ontology (rGREAT)
-# ============================================================
 
 if should_run 3; then
     CURRENT_STEP="step 3 - gene ontology (rGREAT)"
@@ -586,9 +569,7 @@ else
     fi
 fi
 
-# ============================================================
 # STEPS 4 AND 5 - enhancer/promoter and motif analysis (HOMER)
-# ============================================================
 
 if should_run 4 || should_run 5; then
     CURRENT_STEP="steps 4/5 - enhancer/promoter and motif analysis (HOMER)"
@@ -667,9 +648,7 @@ else
     fi
 fi
 
-# ============================================================
 # STEP 6 - summary and plots (Python)
-# ============================================================
 
 if should_run 6; then
     CURRENT_STEP="step 6 - summary and plots (Python)"
@@ -696,9 +675,7 @@ else
     echo "skipping step 6 - summary and plots (Python)"
 fi
 
-# ============================================================
-# DONE
-# ============================================================
+# END
 
 # write the finish time to the stage log
 echo "" >> "$STAGE_LOG"
