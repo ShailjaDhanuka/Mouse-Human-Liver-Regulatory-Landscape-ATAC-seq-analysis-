@@ -134,7 +134,7 @@ The default for `start-step` and `end-step` is `1` and `6`, respectively. Here i
 ```bash
 sbatch automatedPipeline.sh <mouse_peaks> <human_peaks> <cactus_file> <output_dir> --start-step 2 --end-step 6 --skip 3,4
 ```
-The detailed usage instructions are here:
+The detailed usage instructions are here. Note - there should be no spaces between listed step numbers when using `--skip`:
 ```bash
 sbatch (or bash) automatedPipeline.sh \
     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
