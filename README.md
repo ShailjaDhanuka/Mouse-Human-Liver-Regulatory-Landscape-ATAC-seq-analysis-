@@ -153,6 +153,10 @@ The optional parameters are:
     --end-step N      -> Stop after step N (default: 6)
     --skip N,N,...    -> Skip specific steps e.g. --skip 3,4
 ```
+
+## Demo
+See [YouTube video](https://youtu.be/-nLVSa9fvaw).
+
 ## Summary Output
 The summarized output will be in your designated output directory under the summary subdirectory. It has the following structure:
 ```
