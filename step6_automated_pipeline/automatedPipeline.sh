@@ -619,13 +619,21 @@ if should_run 4 || should_run 5; then
     check_outputs \
         "HOMER motif result files (steps 4/5 - enhancer/promoter and motif analysis output) in $OUTPUT_DIR/homer/" \
         "$OUTPUT_DIR/homer/shared_vs_unique_human_enhancer_motifs/knownResults.txt" \
+        "$OUTPUT_DIR/homer/shared_vs_unique_human_enhancer_motifs/homerMotifs.all.motifs" \
         "$OUTPUT_DIR/homer/shared_vs_unique_mouse_enhancer_motifs/knownResults.txt" \
+        "$OUTPUT_DIR/homer/shared_vs_unique_mouse_enhancer_motifs/homerMotifs.all.motifs" \
         "$OUTPUT_DIR/homer/unique_human_enhancer_motifs/knownResults.txt" \
+        "$OUTPUT_DIR/homer/unique_human_enhancer_motifs/homerMotifs.all.motifs" \
         "$OUTPUT_DIR/homer/unique_mouse_enhancer_motifs/knownResults.txt" \
+        "$OUTPUT_DIR/homer/unique_mouse_enhancer_motifs/homerMotifs.all.motifs" \
         "$OUTPUT_DIR/homer/shared_vs_unique_human_promoter_motifs/knownResults.txt" \
+        "$OUTPUT_DIR/homer/shared_vs_unique_human_promoter_motifs/homerMotifs.all.motifs" \
         "$OUTPUT_DIR/homer/shared_vs_unique_mouse_promoter_motifs/knownResults.txt" \
+        "$OUTPUT_DIR/homer/shared_vs_unique_mouse_promoter_motifs/homerMotifs.all.motifs" \
         "$OUTPUT_DIR/homer/unique_human_promoter_motifs/knownResults.txt" \
-        "$OUTPUT_DIR/homer/unique_mouse_promoter_motifs/knownResults.txt"
+        "$OUTPUT_DIR/homer/unique_human_promoter_motifs/homerMotifs.all.motifs" \
+        "$OUTPUT_DIR/homer/unique_mouse_promoter_motifs/knownResults.txt" \
+        "$OUTPUT_DIR/homer/unique_mouse_promoter_motifs/homerMotifs.all.motifs"
 
     log_stage 4 "PASSED" "enhancer/promoter classification done"
     log_stage 5 "PASSED" "motif analysis done"
@@ -639,13 +647,21 @@ else
         check_outputs \
             "HOMER motif result files (steps 4/5 - enhancer/promoter and motif analysis output) must be in $OUTPUT_DIR/homer/ when skipping steps 4/5" \
             "$OUTPUT_DIR/homer/shared_vs_unique_human_enhancer_motifs/knownResults.txt" \
+            "$OUTPUT_DIR/homer/shared_vs_unique_human_enhancer_motifs/homerMotifs.all.motifs" \
             "$OUTPUT_DIR/homer/shared_vs_unique_mouse_enhancer_motifs/knownResults.txt" \
+            "$OUTPUT_DIR/homer/shared_vs_unique_mouse_enhancer_motifs/homerMotifs.all.motifs" \
             "$OUTPUT_DIR/homer/unique_human_enhancer_motifs/knownResults.txt" \
+            "$OUTPUT_DIR/homer/unique_human_enhancer_motifs/homerMotifs.all.motifs" \
             "$OUTPUT_DIR/homer/unique_mouse_enhancer_motifs/knownResults.txt" \
+            "$OUTPUT_DIR/homer/unique_mouse_enhancer_motifs/homerMotifs.all.motifs" \
             "$OUTPUT_DIR/homer/shared_vs_unique_human_promoter_motifs/knownResults.txt" \
+            "$OUTPUT_DIR/homer/shared_vs_unique_human_promoter_motifs/homerMotifs.all.motifs" \
             "$OUTPUT_DIR/homer/shared_vs_unique_mouse_promoter_motifs/knownResults.txt" \
+            "$OUTPUT_DIR/homer/shared_vs_unique_mouse_promoter_motifs/homerMotifs.all.motifs" \
             "$OUTPUT_DIR/homer/unique_human_promoter_motifs/knownResults.txt" \
-            "$OUTPUT_DIR/homer/unique_mouse_promoter_motifs/knownResults.txt"
+            "$OUTPUT_DIR/homer/unique_human_promoter_motifs/homerMotifs.all.motifs" \
+            "$OUTPUT_DIR/homer/unique_mouse_promoter_motifs/knownResults.txt" \
+            "$OUTPUT_DIR/homer/unique_mouse_promoter_motifs/homerMotifs.all.motifs"
     fi
 fi
 
