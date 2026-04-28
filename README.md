@@ -193,7 +193,7 @@ There are a few assumptions and limitations to keep in mind when using ATACer.
 ---
 ## Citation
 Balamurugan, S., Dhanuka, S., Feng, W., & Turecki, S. (2026). ATACer: Mouse-Human Liver Regulatory Landscape - ATAC-seq Analysis. 
-[03-712 Final Course Project, Carnegie Mellon University] GitHub. https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-
+[03-713 Final Course Project, Carnegie Mellon University] GitHub. https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-
 ## Course Project
 
 **03-713: Bioinformatics Data Integration Practicum**
