@@ -52,7 +52,7 @@ Map open chromatin regions between human and mouse genomes using halLiftover and
 ---
 
 ### Step 3 — Biological Process Enrichment
-Run GO biolgical pathway enrichment on all open chromatin regions from mouse and human liver, shared regions, and species-specific regions to identify what biological processes are regulated and whether they are conserved.
+Run GO biological pathway enrichment on all open chromatin regions from mouse and human liver, shared regions, and species-specific regions to identify what biological processes are being regulated and whether they are conserved.
 
 **Tools:** [rGREAT](https://github.com/jokergoo/rGREAT)
 
@@ -108,7 +108,7 @@ Ensure all necessary dependencies and environments are installed/created. Then u
 - bedtools -- [Installation Instructions](https://bedtools.readthedocs.io/en/latest/content/installation.html)
 
 ### Step 3: Data Preparation
-You need to have mouse and human ATAC-seq narrowPeak.gz files, a Cactus HAL alignmemt file and your desired output folder prepared. 
+You need to have mouse and human ATAC-seq narrowPeak.gz files, a Cactus HAL alignment file and your desired output folder prepared. 
 
 If you have completed any previous step and would like to skip them in the pipeline, please follow the structure below to make sure output files are placed correctly. Refer to [expected_outputs.md](expected_outputs.md) for specific file information and naming instructions.
 - halLiftover/HALPER output (ortholog mapping)-> `<output_dir>/mapping/`
@@ -119,7 +119,7 @@ If you have completed any previous step and would like to skip them in the pipel
 
 ### Step 4: Run the scripts.
 ATACer is able to perform 5 possible analyses. You can designate the exact steps you want performed.
-- 1 = ortholog mapping (HALPER)
+- 1 = ortholog mapping (halLiftover/HALPER)
 - 2 = shared/unique peaks (bedtools)
 - 3 = gene ontology (rGREAT)
 - 4 & 5 = enhancer/promoter classification (HOMER annotatePeaks) & motif analysis (HOMER findMotifsGenome)
@@ -160,7 +160,7 @@ The summarized output will be in your designated output directory under the summ
 ├── peak_counts.png                  ← unique/shared peak bar plots
 ├── promoter_vs_enhancer.png         ← promoter/enhancer peak bar plots
 ├── pipeline_summary.txt             ← written summary of results
-├── stage_log.txt                    ← stage log for pipeline run 
+├── stage_log.txt                    ← stage log from pipeline run 
 ```
 You can also go to the [sample output folder](./sampleOutputs/) for reference of what each file contains.
 
@@ -177,10 +177,10 @@ You can also go to the [sample output folder](./sampleOutputs/) for reference of
 ---
 
 ## Limitations
-When using this pipeline, there are a few assumptions and limitations to keep in mind.
+There are a few assumptions and limitations to keep in mind when using ATACer.
 - The GO analysis does not take peak signal strength into account.
-- The full pipeline takes several hours on slurm
-- The pipeline assumes that the input data has been properly preprocessed and is of high quality.
+- The full pipeline will take several hours to run on slurm.
+- The pipeline assumes that input ATAC-seq data has been properly preprocessed and is of high quality.
 
 ## Contributors
 
@@ -192,7 +192,7 @@ When using this pipeline, there are a few assumptions and limitations to keep in
 | Wanyue Feng        | [@aquatique-plus](https://github.com/aquatique-plus) 
 ---
 ## Citation
-Balamurugan, S., Dhanuka, S., Feng, W. & Turecki, S. (2026). ATACer: Mouse-Human Liver Regulatory Landscape - ATAC-seq Analysis. 
+Balamurugan, S., Dhanuka, S., Feng, W., & Turecki, S. (2026). ATACer: Mouse-Human Liver Regulatory Landscape - ATAC-seq Analysis. 
 [03-712 Final Course Project, Carnegie Mellon University] GitHub. https://github.com/ShailjaDhanuka/Mouse-Human-Liver-Regulatory-Landscape-ATAC-seq-analysis-
 ## Course Project
 
