@@ -52,7 +52,7 @@ If any are missing or empty, the pipeline will exit with an error.
 **Output folder:** `<output_dir>/homer/`
 
 Each subdirectory below contains a full HOMER `findMotifsGenome` result.
-The pipeline checks for `knownResults.txt` inside each directory to verify the run completed.
+The pipeline checks for `knownResults.txt` and `homerMotifs.all.motifs` inside each directory to verify the run completed.
 
 | Directory                                 | Peak set | Element type |
 |-------------------------------------------|----------|-------------|
