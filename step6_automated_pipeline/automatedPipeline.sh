@@ -35,7 +35,7 @@ set -E
 # under your given output directory. See structure of output directories below.
 
 ## STRUCTURE OF OUTPUT DIRECTORY
-# mkdir -p "$OUTPUT_DIR/logs"
+
 # mkdir -p "$OUTPUT_DIR/mapping"        # step 1 outputs go here (mapped ortholog peaks)
 # mkdir -p "$OUTPUT_DIR/open_chrom"     # step 2 outputs go here (shared open / unique open with
 #                                                                ortholog closed / no mapped ortholog)
@@ -55,17 +55,19 @@ set -E
 #         [--start-step <n>]
 #         [--end-step <n>]
 #         [--skip <n,n..>]
-
+#
+# Example Usage:
+#
 # To run all steps:
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_dir>
 #
-# To run only steps 1 and 2:
+# To run only steps 1 and 2 (mapping and OCR identification):
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --end-step 2
 #
-# To skip step 3 (rGREAT):
+# To skip step 3 (no rGREAT):
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --skip 3
@@ -76,19 +78,19 @@ set -E
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 2
 #
-# To start from step 3 (bedtools already done):
+# To start from step 3 (ortholog mapping and OCR identification done):
 #   NOTE: BED files must be in <output_dir>/open_chrom/
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 3
 #
-# To start from step 4 (rGREAT already done):
+# To start from step 4 (ortholog mapping and OCR identification done):
 #   NOTE: BED files must be in <output_dir>/open_chrom/
 # sbatch automatedPipeline.sh \
 #     <mouse_peaks> <human_peaks> <cactus_file> <output_dir> \
 #     --start-step 4
 #
-# To start from step 6 (HOMER already done):
+# To start from step 6 (all prior steps done):
 #   NOTE: GO CSV files must be in <output_dir>/gene_ontology/
 #   AND HOMER result directories must be in <output_dir>/homer/
 # sbatch automatedPipeline.sh \
@@ -196,7 +198,7 @@ module load bedtools
 CURRENT_STEP="starting up"
 
 # This function runs automatically if the pipeline crashes
-# It prints where the failure happened, lists any files saved
+# It prints where the failure happened, the error code, lists any files saved
 # so far, and tells the user how to resume from where it stopped
 cleanup_on_error() {
     local exit_code=$?
@@ -403,7 +405,7 @@ if should_run 1; then
         fi
     done
 
-    # run the HALPER mapping script in both directions
+    # run the HALPER mapping script - performs both directions
     # mouse to human and human to mouse
     bash "$REPO_DIR/step2_cross_species_mapping/orthologMapping.sh" \
         "$MOUSE_ATAC" \
