@@ -63,7 +63,7 @@ run_great_and_save <- function(bed_path, genome, label, outdir) {
                gene_sets  = "GO:BP",
                tss_source = genome,
                background = NULL,
-               cores      = 4)
+               cores      = 1)
 
   tb       <- getEnrichmentTable(res)
   out_path <- file.path(outdir, paste0(label, "_GREAT_GO_BP.csv"))

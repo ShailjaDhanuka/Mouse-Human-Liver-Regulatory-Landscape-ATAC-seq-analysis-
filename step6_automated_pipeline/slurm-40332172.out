@@ -1,0 +1,495 @@
+Repo root: /ocean/projects/bio230007p/wanyuef/project
+-------------------------------------------
+tissue regulatory pipeline
+-------------------------------------------
+mouse atac: /ocean/projects/bio230007p/ikaplow/MouseAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+human atac: /ocean/projects/bio230007p/ikaplow/HumanAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+output:     ../../demo/
+
+  step 1: ortholog mapping (halLiftover and HALPER) -- skipping
+  step 2: shared/unique peaks (bedtools) -- will run
+  step 3: gene ontology (rGREAT) -- will run
+  step 4: enhancer/promoter classification (HOMER annotatePeaks) -- skipping
+  step 5: motif analysis (HOMER findMotifsGenome) -- skipping
+  step 6: summary and plots (Python) -- skipping
+
+note: some steps are being skipped.
+      make sure required input files are already
+      in the correct output folder.
+      See README for details.
+-------------------------------------------
+skipping step 1 - ortholog mapping (HALPER)
+check passed: HALPER narrowPeak files (step 1 - ortholog mapping output) must be in ../../demo//mapping/ when skipping step 1
+
+--- step 2: shared/unique peaks (bedtools) ---
+check passed: HALPER narrowPeak files (step 1 - ortholog mapping output) required in ../../demo//mapping/
+check passed: BED files (step 2 - shared/unique peaks output) in ../../demo//open_chrom/
+check passed: ../../demo//open_chrom/mouse_shared_in_human.humanCoords.bed looks like a valid BED file (38051 peaks)
+check passed: ../../demo//open_chrom/human_shared_in_mouse.mouseCoords.bed looks like a valid BED file (34439 peaks)
+check passed: ../../demo//open_chrom/mouse_open_human_closed.mouseCoords.bed looks like a valid BED file (34611 peaks)
+check passed: ../../demo//open_chrom/human_open_mouse_closed.humanCoords.bed looks like a valid BED file (36568 peaks)
+  mouse peaks shared in human:    38051 peaks
+  human peaks shared in mouse:    34439 peaks
+  mouse peaks open but closed in human:  34611 peaks
+  human peaks open but closed in mouse:  36568 peaks
+  mouse peaks with no human ortholog:        53571 peaks
+  human peaks with no mouse ortholog:        49500 peaks
+step 2 done
+
+--- step 3: gene ontology (rGREAT) ---
+check passed: BED files (step 2 - shared/unique peaks output) required in ../../demo//open_chrom/
+
+CondaError: Run 'conda init' before 'conda deactivate'
+
+/ocean/projects/bio230007p/wanyuef/project/step3_biological_processes/run_rgreat_batch.sh: line 18: /jet/home/sdhanuka/miniconda3/etc/profile.d/conda.sh: Permission denied
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: 'BiocGenerics'
+
+The following objects are masked from 'package:stats':
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from 'package:base':
+
+    Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,
+    as.data.frame, basename, cbind, colnames, dirname, do.call,
+    duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,
+    lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    pmin.int, rank, rbind, rownames, sapply, saveRDS, setdiff, table,
+    tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: 'S4Vectors'
+
+The following object is masked from 'package:utils':
+
+    findMatches
+
+The following objects are masked from 'package:base':
+
+    I, expand.grid, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+
+
+========================================
+rGREAT version 2.8.0
+Bioconductor page: http://bioconductor.org/packages/rGREAT/
+Github page: https://github.com/jokergoo/rGREAT
+
+If you use it in published research, please cite:
+Gu, Z. rGREAT: an R/Bioconductor package for functional enrichment 
+  on genomic regions. Bioinformatics 2023.
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(rGREAT))
+
+Note: On Aug 19 2019 GREAT released version 4 where it supports `hg38`
+genome and removes some ontologies such pathways. `submitGreatJob()`
+still takes `hg19` as default. `hg38` can be specified by the `genome
+= 'hg38'` argument. To use the older versions such as 3.0.0, specify as
+`submitGreatJob(..., version = '3.0.0')`.
+
+From rGREAT version 1.99.0, it also implements the GREAT algorithm and
+it allows to integrate GREAT analysis with the Bioconductor annotation
+ecosystem. By default it supports more than 500 organisms. Check the
+new function `great()` and the new vignette.
+========================================
+
+Starting GREAT batch run: 6 files
+Output directory: ../../demo//gene_ontology 
+
+──  mouse_shared_in_human  ──────────────────────────
+  Genome: hg38 
+  Reading: ../../demo//open_chrom/mouse_shared_in_human.humanCoords.bed 
+  Regions loaded: 38051 
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Hsapiens.UCSC.hg38.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chr20, chr21, chr22, chrX,
+    chrY, chrM'.
+* 18110/30830 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 18141 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/mouse_shared_in_human_GREAT_GO_BP.csv 
+  GO terms returned: 8816 
+  Top 5 terms:
+          id                                                 description
+1 GO:0034377                        plasma lipoprotein particle assembly
+2 GO:1901532 regulation of hematopoietic progenitor cell differentiation
+3 GO:0030224                                    monocyte differentiation
+4 GO:0006094                                             gluconeogenesis
+5 GO:0010907            positive regulation of glucose metabolic process
+  p_adjust
+1        0
+2        0
+3        0
+4        0
+5        0
+
+──  mouse_open_human_closed  ──────────────────────────
+  Genome: mm10 
+  Reading: ../../demo//open_chrom/mouse_open_human_closed.mouseCoords.bed 
+  Regions loaded: 34611 
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Mmusculus.UCSC.mm10.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chrX, chrY, chrM'.
+
+* 20590/24515 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 19858 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/mouse_open_human_closed_GREAT_GO_BP.csv 
+  GO terms returned: 9191 
+  Top 5 terms:
+          id                                       description p_adjust
+1 GO:0034380        high-density lipoprotein particle assembly        0
+2 GO:0034372  very-low-density lipoprotein particle remodeling        0
+3 GO:0034370 triglyceride-rich lipoprotein particle remodeling        0
+4 GO:0043380       regulation of memory T cell differentiation        0
+5 GO:0043379                     memory T cell differentiation        0
+
+──  human_no_ortholog  ──────────────────────────
+  Genome: hg38 
+  Reading: ../../demo//open_chrom/human_no_ortholog.humanCoords.bed 
+  Regions loaded: 49500 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 32598 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/human_no_ortholog_GREAT_GO_BP.csv 
+  GO terms returned: 8925 
+  Top 5 terms:
+          id                                              description p_adjust
+1 GO:0060696             regulation of phospholipid catabolic process        0
+2 GO:0034384              high-density lipoprotein particle clearance        0
+3 GO:0043691                            reverse cholesterol transport        0
+4 GO:0010867 positive regulation of triglyceride biosynthetic process        0
+5 GO:0044406                             adhesion of symbiont to host        0
+
+──  human_shared_in_mouse  ──────────────────────────
+  Genome: mm10 
+  Reading: ../../demo//open_chrom/human_shared_in_mouse.mouseCoords.bed 
+  Regions loaded: 34439 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 18863 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/human_shared_in_mouse_GREAT_GO_BP.csv 
+  GO terms returned: 9298 
+  Top 5 terms:
+          id
+1 GO:0034377
+2 GO:0042776
+3 GO:1902686
+4 GO:0035794
+5 GO:0015986
+                                                                      description
+1                                            plasma lipoprotein particle assembly
+2                          proton motive force-driven mitochondrial ATP synthesis
+3 mitochondrial outer membrane permeabilization involved in programmed cell death
+4                      positive regulation of mitochondrial membrane permeability
+5                                        proton motive force-driven ATP synthesis
+  p_adjust
+1        0
+2        0
+3        0
+4        0
+5        0
+
+──  human_open_mouse_closed  ──────────────────────────
+  Genome: hg38 
+  Reading: ../../demo//open_chrom/human_open_mouse_closed.humanCoords.bed 
+  Regions loaded: 36568 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 22607 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/human_open_mouse_closed_GREAT_GO_BP.csv 
+  GO terms returned: 8744 
+  Top 5 terms:
+          id                                           description p_adjust
+1 GO:0097021             lymphocyte migration into lymphoid organs        0
+2 GO:0033033 negative regulation of myeloid cell apoptotic process        0
+3 GO:0045655                regulation of monocyte differentiation        0
+4 GO:0045589       regulation of regulatory T cell differentiation        0
+5 GO:0030224                              monocyte differentiation        0
+
+──  mouse_no_ortholog  ──────────────────────────
+  Genome: mm10 
+  Reading: ../../demo//open_chrom/mouse_no_ortholog.mouseCoords.bed 
+  Regions loaded: 53571 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 32042 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/mouse_no_ortholog_GREAT_GO_BP.csv 
+  GO terms returned: 9439 
+  Top 5 terms:
+          id                                 description p_adjust
+1 GO:1901685    glutathione derivative metabolic process        0
+2 GO:1901687 glutathione derivative biosynthetic process        0
+3 GO:0046687                        response to chromate        0
+4 GO:0033986                        response to methanol        0
+5 GO:0002396                MHC protein complex assembly        0
+
+── Final output check ───────────────────────────────
+ [ OK      ] mouse_shared_in_human_GREAT_GO_BP.csv 
+ [ OK      ] mouse_open_human_closed_GREAT_GO_BP.csv 
+ [ OK      ] human_no_ortholog_GREAT_GO_BP.csv 
+ [ OK      ] human_shared_in_mouse_GREAT_GO_BP.csv 
+ [ OK      ] human_open_mouse_closed_GREAT_GO_BP.csv 
+ [ OK      ] mouse_no_ortholog_GREAT_GO_BP.csv 
+check passed: GO result CSV files (step 3 - gene ontology output) in ../../demo//gene_ontology/
+
+CondaError: Run 'conda init' before 'conda deactivate'
+
+/ocean/projects/bio230007p/wanyuef/project/step3_biological_processes/run_rgreat.sh: line 16: /jet/home/sdhanuka/miniconda3/etc/profile.d/conda.sh: Permission denied
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: 'BiocGenerics'
+
+The following objects are masked from 'package:stats':
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from 'package:base':
+
+    Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,
+    as.data.frame, basename, cbind, colnames, dirname, do.call,
+    duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,
+    lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    pmin.int, rank, rbind, rownames, sapply, saveRDS, setdiff, table,
+    tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: 'S4Vectors'
+
+The following object is masked from 'package:utils':
+
+    findMatches
+
+The following objects are masked from 'package:base':
+
+    I, expand.grid, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+
+
+========================================
+rGREAT version 2.8.0
+Bioconductor page: http://bioconductor.org/packages/rGREAT/
+Github page: https://github.com/jokergoo/rGREAT
+
+If you use it in published research, please cite:
+Gu, Z. rGREAT: an R/Bioconductor package for functional enrichment 
+  on genomic regions. Bioinformatics 2023.
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(rGREAT))
+
+Note: On Aug 19 2019 GREAT released version 4 where it supports `hg38`
+genome and removes some ontologies such pathways. `submitGreatJob()`
+still takes `hg19` as default. `hg38` can be specified by the `genome
+= 'hg38'` argument. To use the older versions such as 3.0.0, specify as
+`submitGreatJob(..., version = '3.0.0')`.
+
+From rGREAT version 1.99.0, it also implements the GREAT algorithm and
+it allows to integrate GREAT analysis with the Bioconductor annotation
+ecosystem. By default it supports more than 500 organisms. Check the
+new function `great()` and the new vignette.
+========================================
+
+Running GREAT on human peaks...
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Hsapiens.UCSC.hg38.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chr20, chr21, chr22, chrX,
+    chrY, chrM'.
+* 18110/30830 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 74082 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+Human done!
+Running GREAT on mouse peaks...
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Mmusculus.UCSC.mm10.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chrX, chrY, chrM'.
+
+* 20590/24515 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 70022 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+Mouse done!
+
+Top human GO terms:
+          id                                       description p_adjust
+1 GO:0060696      regulation of phospholipid catabolic process        0
+2 GO:0060574             intestinal epithelial cell maturation        0
+3 GO:2000646 positive regulation of receptor catabolic process        0
+4 GO:2001198      regulation of dendritic cell differentiation        0
+5 GO:0010713 negative regulation of collagen metabolic process        0
+6 GO:0043691                     reverse cholesterol transport        0
+
+Top mouse GO terms:
+          id                                                    description
+1 GO:0071332                         cellular response to fructose stimulus
+2 GO:0010901 regulation of very-low-density lipoprotein particle remodeling
+3 GO:0034384                    high-density lipoprotein particle clearance
+4 GO:0009136             purine nucleoside diphosphate biosynthetic process
+5 GO:0009180         purine ribonucleoside diphosphate biosynthetic process
+6 GO:0034380                     high-density lipoprotein particle assembly
+  p_adjust
+1        0
+2        0
+3        0
+4        0
+5        0
+6        0
+check passed: Full-peak GO result CSV files (step 3 - gene ontology output) in ../../demo//gene_ontology/
+step 3 done
+skipping steps 4 and 5 - enhancer/promoter classification and motif analysis (HOMER)
+skipping step 6 - summary and plots (Python)
+
+-------------------------------------------
+pipeline done
+-------------------------------------------
+
+stage log:
+Pipeline started: Tue Apr 28 00:01:37 EDT 2026
+Mouse ATAC:  /ocean/projects/bio230007p/ikaplow/MouseAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+Human ATAC:  /ocean/projects/bio230007p/ikaplow/HumanAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+Cactus file: /ocean/projects/bio23007p/ikaplow/Alignments/10plusway-master.hal
+Output dir:  ../../demo/
+
+[SKIPPED] Step 1: ortholog mapping (halLiftover and HALPER) (Tue Apr 28 00:01:38 EDT 2026)
+[PLANNED] Step 2: shared/unique peaks (bedtools) (Tue Apr 28 00:01:38 EDT 2026)
+[PLANNED] Step 3: gene ontology (rGREAT) (Tue Apr 28 00:01:38 EDT 2026)
+[SKIPPED] Step 4: enhancer/promoter classification (HOMER annotatePeaks) (Tue Apr 28 00:01:38 EDT 2026)
+[SKIPPED] Step 5: motif analysis (HOMER findMotifsGenome) (Tue Apr 28 00:01:38 EDT 2026)
+[SKIPPED] Step 6: summary and plots (Python) (Tue Apr 28 00:01:38 EDT 2026)
+[PASSED] Step 2: shared/unique peaks done. mouse peaks shared in human: 38051 human peaks shared in mouse: 34439
+     unique mouse peaks: 34611 unique human peaks: 36568 (Tue Apr 28 00:01:43 EDT 2026)
+[PASSED] Step 3: gene ontology done. 6 categorized GO result files and 2 full-peak GO result files produced (Tue Apr 28 00:10:02 EDT 2026)
+
+pipeline finished: Tue Apr 28 00:10:02 EDT 2026
+
+results saved to:
+  ../../demo//mapping/        HALPER narrowPeak files
+  ../../demo//open_chrom/     BED files (shared and unique peaks)
+  ../../demo//gene_ontology/  GO result CSV files
+  ../../demo//homer/          HOMER motif result directories
+  ../../demo//summary/        summary text, plots and stage log
+-------------------------------------------

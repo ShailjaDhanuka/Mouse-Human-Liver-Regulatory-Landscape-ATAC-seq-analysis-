@@ -1,0 +1,1566 @@
+Repo root: /ocean/projects/bio230007p/wanyuef/project
+-------------------------------------------
+tissue regulatory pipeline
+-------------------------------------------
+mouse atac: /ocean/projects/bio230007p/ikaplow/MouseAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+human atac: /ocean/projects/bio230007p/ikaplow/HumanAtac/Liver/peak/idr_reproducibility/idr.conservative_peak.narrowPeak.gz
+output:     ../../demo/
+
+  step 1: ortholog mapping (halLiftover and HALPER) -- skipping
+  step 2: shared/unique peaks (bedtools) -- will run
+  step 3: gene ontology (rGREAT) -- will run
+  step 4: enhancer/promoter classification (HOMER annotatePeaks) -- will run
+  step 5: motif analysis (HOMER findMotifsGenome) -- will run
+  step 6: summary and plots (Python) -- will run
+
+note: some steps are being skipped.
+      make sure required input files are already
+      in the correct output folder.
+      See README for details.
+-------------------------------------------
+skipping step 1 - ortholog mapping (HALPER)
+check passed: HALPER narrowPeak files (step 1 - ortholog mapping output) must be in ../../demo//mapping/ when skipping step 1
+
+--- step 2: shared/unique peaks (bedtools) ---
+check passed: HALPER narrowPeak files (step 1 - ortholog mapping output) required in ../../demo//mapping/
+check passed: BED files (step 2 - shared/unique peaks output) in ../../demo//open_chrom/
+check passed: ../../demo//open_chrom/mouse_shared_in_human.humanCoords.bed looks like a valid BED file (38051 peaks)
+check passed: ../../demo//open_chrom/human_shared_in_mouse.mouseCoords.bed looks like a valid BED file (34439 peaks)
+check passed: ../../demo//open_chrom/mouse_open_human_closed.mouseCoords.bed looks like a valid BED file (34611 peaks)
+check passed: ../../demo//open_chrom/human_open_mouse_closed.humanCoords.bed looks like a valid BED file (36568 peaks)
+  mouse peaks shared in human:    38051 peaks
+  human peaks shared in mouse:    34439 peaks
+  mouse peaks open but closed in human:  34611 peaks
+  human peaks open but closed in mouse:  36568 peaks
+  mouse peaks with no human ortholog:        53571 peaks
+  human peaks with no mouse ortholog:        49500 peaks
+step 2 done
+
+--- step 3: gene ontology (rGREAT) ---
+check passed: BED files (step 2 - shared/unique peaks output) required in ../../demo//open_chrom/
+
+CondaError: Run 'conda init' before 'conda deactivate'
+
+/ocean/projects/bio230007p/wanyuef/project/step3_biological_processes/run_rgreat_batch.sh: line 18: /jet/home/sdhanuka/miniconda3/etc/profile.d/conda.sh: Permission denied
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: 'BiocGenerics'
+
+The following objects are masked from 'package:stats':
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from 'package:base':
+
+    Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,
+    as.data.frame, basename, cbind, colnames, dirname, do.call,
+    duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,
+    lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    pmin.int, rank, rbind, rownames, sapply, saveRDS, setdiff, table,
+    tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: 'S4Vectors'
+
+The following object is masked from 'package:utils':
+
+    findMatches
+
+The following objects are masked from 'package:base':
+
+    I, expand.grid, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+
+
+========================================
+rGREAT version 2.8.0
+Bioconductor page: http://bioconductor.org/packages/rGREAT/
+Github page: https://github.com/jokergoo/rGREAT
+
+If you use it in published research, please cite:
+Gu, Z. rGREAT: an R/Bioconductor package for functional enrichment 
+  on genomic regions. Bioinformatics 2023.
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(rGREAT))
+
+Note: On Aug 19 2019 GREAT released version 4 where it supports `hg38`
+genome and removes some ontologies such pathways. `submitGreatJob()`
+still takes `hg19` as default. `hg38` can be specified by the `genome
+= 'hg38'` argument. To use the older versions such as 3.0.0, specify as
+`submitGreatJob(..., version = '3.0.0')`.
+
+From rGREAT version 1.99.0, it also implements the GREAT algorithm and
+it allows to integrate GREAT analysis with the Bioconductor annotation
+ecosystem. By default it supports more than 500 organisms. Check the
+new function `great()` and the new vignette.
+========================================
+
+Starting GREAT batch run: 6 files
+Output directory: ../../demo//gene_ontology 
+
+──  mouse_shared_in_human  ──────────────────────────
+  Genome: hg38 
+  Reading: ../../demo//open_chrom/mouse_shared_in_human.humanCoords.bed 
+  Regions loaded: 38051 
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Hsapiens.UCSC.hg38.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chr20, chr21, chr22, chrX,
+    chrY, chrM'.
+* 18110/30830 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 18141 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/mouse_shared_in_human_GREAT_GO_BP.csv 
+  GO terms returned: 8816 
+  Top 5 terms:
+          id                                                 description
+1 GO:0034377                        plasma lipoprotein particle assembly
+2 GO:1901532 regulation of hematopoietic progenitor cell differentiation
+3 GO:0030224                                    monocyte differentiation
+4 GO:0006094                                             gluconeogenesis
+5 GO:0010907            positive regulation of glucose metabolic process
+  p_adjust
+1        0
+2        0
+3        0
+4        0
+5        0
+
+──  mouse_open_human_closed  ──────────────────────────
+  Genome: mm10 
+  Reading: ../../demo//open_chrom/mouse_open_human_closed.mouseCoords.bed 
+  Regions loaded: 34611 
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Mmusculus.UCSC.mm10.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chrX, chrY, chrM'.
+
+* 20590/24515 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 19858 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/mouse_open_human_closed_GREAT_GO_BP.csv 
+  GO terms returned: 9191 
+  Top 5 terms:
+          id                                       description p_adjust
+1 GO:0034380        high-density lipoprotein particle assembly        0
+2 GO:0034372  very-low-density lipoprotein particle remodeling        0
+3 GO:0034370 triglyceride-rich lipoprotein particle remodeling        0
+4 GO:0043380       regulation of memory T cell differentiation        0
+5 GO:0043379                     memory T cell differentiation        0
+
+──  human_no_ortholog  ──────────────────────────
+  Genome: hg38 
+  Reading: ../../demo//open_chrom/human_no_ortholog.humanCoords.bed 
+  Regions loaded: 49500 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 32598 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/human_no_ortholog_GREAT_GO_BP.csv 
+  GO terms returned: 8925 
+  Top 5 terms:
+          id                                              description p_adjust
+1 GO:0060696             regulation of phospholipid catabolic process        0
+2 GO:0034384              high-density lipoprotein particle clearance        0
+3 GO:0043691                            reverse cholesterol transport        0
+4 GO:0010867 positive regulation of triglyceride biosynthetic process        0
+5 GO:0044406                             adhesion of symbiont to host        0
+
+──  human_shared_in_mouse  ──────────────────────────
+  Genome: mm10 
+  Reading: ../../demo//open_chrom/human_shared_in_mouse.mouseCoords.bed 
+  Regions loaded: 34439 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 18863 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/human_shared_in_mouse_GREAT_GO_BP.csv 
+  GO terms returned: 9298 
+  Top 5 terms:
+          id
+1 GO:0034377
+2 GO:0042776
+3 GO:1902686
+4 GO:0035794
+5 GO:0015986
+                                                                      description
+1                                            plasma lipoprotein particle assembly
+2                          proton motive force-driven mitochondrial ATP synthesis
+3 mitochondrial outer membrane permeabilization involved in programmed cell death
+4                      positive regulation of mitochondrial membrane permeability
+5                                        proton motive force-driven ATP synthesis
+  p_adjust
+1        0
+2        0
+3        0
+4        0
+5        0
+
+──  human_open_mouse_closed  ──────────────────────────
+  Genome: hg38 
+  Reading: ../../demo//open_chrom/human_open_mouse_closed.humanCoords.bed 
+  Regions loaded: 36568 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 22607 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/human_open_mouse_closed_GREAT_GO_BP.csv 
+  GO terms returned: 8744 
+  Top 5 terms:
+          id                                           description p_adjust
+1 GO:0097021             lymphocyte migration into lymphoid organs        0
+2 GO:0033033 negative regulation of myeloid cell apoptotic process        0
+3 GO:0045655                regulation of monocyte differentiation        0
+4 GO:0045589       regulation of regulatory T cell differentiation        0
+5 GO:0030224                              monocyte differentiation        0
+
+──  mouse_no_ortholog  ──────────────────────────
+  Genome: mm10 
+  Reading: ../../demo//open_chrom/mouse_no_ortholog.mouseCoords.bed 
+  Regions loaded: 53571 
+* TSS source: TxDb.
+* extended_tss is already cached, directly use it.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 32042 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+  Saved: ../../demo//gene_ontology/mouse_no_ortholog_GREAT_GO_BP.csv 
+  GO terms returned: 9439 
+  Top 5 terms:
+          id                                 description p_adjust
+1 GO:1901685    glutathione derivative metabolic process        0
+2 GO:1901687 glutathione derivative biosynthetic process        0
+3 GO:0046687                        response to chromate        0
+4 GO:0033986                        response to methanol        0
+5 GO:0002396                MHC protein complex assembly        0
+
+── Final output check ───────────────────────────────
+ [ OK      ] mouse_shared_in_human_GREAT_GO_BP.csv 
+ [ OK      ] mouse_open_human_closed_GREAT_GO_BP.csv 
+ [ OK      ] human_no_ortholog_GREAT_GO_BP.csv 
+ [ OK      ] human_shared_in_mouse_GREAT_GO_BP.csv 
+ [ OK      ] human_open_mouse_closed_GREAT_GO_BP.csv 
+ [ OK      ] mouse_no_ortholog_GREAT_GO_BP.csv 
+check passed: GO result CSV files (step 3 - gene ontology output) in ../../demo//gene_ontology/
+
+CondaError: Run 'conda init' before 'conda deactivate'
+
+/ocean/projects/bio230007p/wanyuef/project/step3_biological_processes/run_rgreat.sh: line 16: /jet/home/sdhanuka/miniconda3/etc/profile.d/conda.sh: Permission denied
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: 'BiocGenerics'
+
+The following objects are masked from 'package:stats':
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from 'package:base':
+
+    Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,
+    as.data.frame, basename, cbind, colnames, dirname, do.call,
+    duplicated, eval, evalq, get, grep, grepl, intersect, is.unsorted,
+    lapply, mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    pmin.int, rank, rbind, rownames, sapply, saveRDS, setdiff, table,
+    tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: 'S4Vectors'
+
+The following object is masked from 'package:utils':
+
+    findMatches
+
+The following objects are masked from 'package:base':
+
+    I, expand.grid, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+
+
+========================================
+rGREAT version 2.8.0
+Bioconductor page: http://bioconductor.org/packages/rGREAT/
+Github page: https://github.com/jokergoo/rGREAT
+
+If you use it in published research, please cite:
+Gu, Z. rGREAT: an R/Bioconductor package for functional enrichment 
+  on genomic regions. Bioinformatics 2023.
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(rGREAT))
+
+Note: On Aug 19 2019 GREAT released version 4 where it supports `hg38`
+genome and removes some ontologies such pathways. `submitGreatJob()`
+still takes `hg19` as default. `hg38` can be specified by the `genome
+= 'hg38'` argument. To use the older versions such as 3.0.0, specify as
+`submitGreatJob(..., version = '3.0.0')`.
+
+From rGREAT version 1.99.0, it also implements the GREAT algorithm and
+it allows to integrate GREAT analysis with the Bioconductor annotation
+ecosystem. By default it supports more than 500 organisms. Check the
+new function `great()` and the new vignette.
+========================================
+
+Running GREAT on human peaks...
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Hsapiens.UCSC.hg38.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chr20, chr21, chr22, chrX,
+    chrY, chrM'.
+* 18110/30830 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15413 gene sets (source: org.Hs.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 74082 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 8948 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+Human done!
+Running GREAT on mouse peaks...
+* TSS source: TxDb.
+* check whether TxDb package 'TxDb.Mmusculus.UCSC.mm10.knownGene' is installed.
+* gene ID type in the extended TSS is 'Entrez Gene ID'.
+* restrict chromosomes to 'chr1, chr2, chr3, chr4, chr5, chr6, chr7, chr8, chr9, chr10,
+    chr11, chr12, chr13, chr14, chr15, chr16, chr17, chr18, chr19, chrX, chrY, chrM'.
+
+* 20590/24515 protein-coding genes left.
+* update seqinfo to the selected chromosomes.
+* TSS extension mode is 'basalPlusExt'.
+* construct the basal domains by extending 5000bp to upstream and 1000bp to downsteram of TSS.
+* calculate distances to neighbour regions.
+* extend to both sides until reaching the neighbour genes or to the maximal extension.
+* use GO:BP ontology with 15654 gene sets (source: org.Mm.eg.db).
+* check gene ID type in `gene_sets` and in `extended_tss`.
+* use whole genome as background.
+* remove excluded regions from background.
+* overlap `gr` to background regions (based on midpoint).
+* in total 70022 `gr`.
+* overlap extended TSS to background regions.
+* check which genes are in the gene sets.
+* only take gene sets with size >= 5.
+* in total 9472 gene sets.
+* overlap `gr` to every extended TSS.
+* perform binomial test for each biological term.
+Mouse done!
+
+Top human GO terms:
+          id                                       description p_adjust
+1 GO:0060696      regulation of phospholipid catabolic process        0
+2 GO:0060574             intestinal epithelial cell maturation        0
+3 GO:2000646 positive regulation of receptor catabolic process        0
+4 GO:2001198      regulation of dendritic cell differentiation        0
+5 GO:0010713 negative regulation of collagen metabolic process        0
+6 GO:0043691                     reverse cholesterol transport        0
+
+Top mouse GO terms:
+          id                                                    description
+1 GO:0071332                         cellular response to fructose stimulus
+2 GO:0010901 regulation of very-low-density lipoprotein particle remodeling
+3 GO:0034384                    high-density lipoprotein particle clearance
+4 GO:0009136             purine nucleoside diphosphate biosynthetic process
+5 GO:0009180         purine ribonucleoside diphosphate biosynthetic process
+6 GO:0034380                     high-density lipoprotein particle assembly
+  p_adjust
+1        0
+2        0
+3        0
+4        0
+5        0
+6        0
+check passed: Full-peak GO result CSV files (step 3 - gene ontology output) in ../../demo//gene_ontology/
+step 3 done
+
+--- steps 4/5: enhancer/promoter classification and motif analysis (HOMER) ---
+check passed: BED files (step 2 - shared/unique peaks output) required in ../../demo//open_chrom/
+
+CondaError: Run 'conda init' before 'conda deactivate'
+
+Copying input files (not genome files) to local node..
+Files copied to local node.
+Combining open chromatin mapped to closed chromatin orthologs with open regions with no corresponding orthologs..
+Combined bed files created.
+Annotating peaks...
+
+	Peak file = mouse_shared_human_coords
+	Genome = hg38
+	Organism = human
+	Peak/BED file conversion summary:
+		BED/Header formatted lines: 38051
+		peakfile formatted lines: 0
+		Duplicated Peak IDs: 0
+
+	Peak File Statistics:
+		Total Peaks: 38051
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Peak file looks good!
+
+	Reading Positions...
+	-----------------------
+	offset=0
+	Finding Closest TSS...
+	Annotating:.......................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	279.0	27132416	-0.289	8.121
+		miRNA	10.0	109554	2.861	-13.157
+		ncRNA	234.0	7132742	1.385	-83.684
+		TTS	608.0	32468647	0.576	-46.174
+		pseudo	3.0	2094123	-3.132	18.178
+		Exon	3018.0	37461929	2.681	-3154.390
+		Intron	11687.0	1260832437	-0.438	968.753
+		Intergenic	5683.0	1623206414	-1.843	12351.983
+		Promoter	14518.0	36173306	4.998	-39273.676
+		5UTR	2011.0	2669935	5.906	-6312.071
+		snoRNA	0.0	357	-0.006	0.004
+		scRNA	0.0	97	-0.002	0.001
+		rRNA	0.0	25562	-0.402	0.321
+	NOTE: If this part takes more than 2 minutes, there is a good chance
+		your machine ran out of memory: consider hitting ctrl+C and rerunning
+		the command with "-noann"
+	To capture annotation stats in a file, use "-annStats <filename>" next time
+	Annotating:.......................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	279.0	27132416	-0.288	8.085
+		Retroposon	2.0	4043950	-4.666	43.598
+		RC?	0.0	59641	-0.806	0.749
+		RNA	0.0	107756	-1.234	1.353
+		miRNA	10.0	109554	2.862	-13.162
+		ncRNA	234.0	7132742	1.386	-83.764
+		TTS	604.0	32468647	0.567	-44.663
+		LINE	340.0	626518711	-4.532	7329.654
+		srpRNA	0.0	261424	-2.098	3.282
+		SINE	640.0	376897074	-2.886	3056.767
+		RC	0.0	358685	-2.460	4.503
+		tRNA	6.0	90990	2.393	-6.750
+		DNA?	0.0	422156	-2.655	5.300
+		pseudo	3.0	2094123	-3.131	18.165
+		DNA	178.0	98908730	-2.802	736.528
+		Exon	3005.0	37461929	2.676	-3130.761
+		Intron	6819.0	657832052	-0.276	171.360
+		Intergenic	4422.0	738130028	-1.067	1964.129
+		Promoter	14513.0	36173306	4.998	-39261.858
+		5UTR	2011.0	2669935	5.907	-6313.162
+		snoRNA	0.0	357	-0.006	0.004
+		LTR?	7.0	1136894	-1.028	3.606
+		scRNA	0.0	121238	-1.335	1.522
+		CpG-Island	4619.0	8784954	5.388	-13026.805
+		Low_complexity	43.0	5391300	-0.654	7.036
+		LTR	135.0	257518063	-4.582	2806.381
+		Simple_repeat	169.0	33792674	-1.328	103.534
+		snRNA	0.0	311487	-2.296	3.911
+		Unknown	6.0	713558	-0.578	1.558
+		SINE?	0.0	2674	-0.048	0.034
+		Satellite	6.0	74131976	-7.277	907.635
+		rRNA	0.0	199070	-1.807	2.499
+	Counting Tags in Peaks from each directory...
+	Organism: human
+	Loading Gene Informaiton...
+	Outputing Annotation File...
+	Done annotating peaks file
+
+
+	Peak file = human_shared_mouse_coords
+	Genome = mm10
+	Organism = mouse
+	Peak/BED file conversion summary:
+		BED/Header formatted lines: 34439
+		peakfile formatted lines: 0
+		Duplicated Peak IDs: 0
+
+	Peak File Statistics:
+		Total Peaks: 34439
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Peak file looks good!
+
+	Reading Positions...
+	-----------------------
+	offset=0
+	Finding Closest TSS...
+	Annotating:....................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	233.0	20931892	-0.234	5.117
+		miRNA	12.0	34262	4.742	-30.023
+		ncRNA	208.0	4421991	1.845	-119.506
+		TTS	576.0	28468393	0.628	-51.124
+		pseudo	3.0	578215	-1.335	2.874
+		Exon	2267.0	35013924	2.306	-1868.683
+		Intron	9445.0	962088562	-0.415	653.012
+		Intergenic	6008.0	1545159908	-1.751	12429.122
+		Promoter	13430.0	31483328	5.026	-36662.274
+		5UTR	2257.0	2374057	6.182	-7524.112
+		snoRNA	0.0	19	-0.000	0.000
+		rRNA	0.0	5631	-0.103	0.074
+	NOTE: If this part takes more than 2 minutes, there is a good chance
+		your machine ran out of memory: consider hitting ctrl+C and rerunning
+		the command with "-noann"
+	To capture annotation stats in a file, use "-annStats <filename>" next time
+	Annotating:....................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	233.0	20931892	-0.233	5.096
+		Other	5.0	7145139	-4.225	75.658
+		RC?	0.0	10979	-0.194	0.144
+		RNA	0.0	113962	-1.317	1.491
+		miRNA	12.0	34262	4.742	-30.029
+		ncRNA	208.0	4421991	1.846	-119.575
+		TTS	576.0	28468393	0.629	-51.219
+		LINE	91.0	520779584	-6.227	7093.281
+		LINE?	0.0	8168	-0.147	0.107
+		srpRNA	1.0	42953	0.831	-0.844
+		SINE	296.0	193418762	-3.096	1679.996
+		RC	0.0	65629	-0.894	0.859
+		tRNA	10.0	265758	1.524	-5.754
+		DNA?	0.0	142070	-1.516	1.859
+		pseudo	3.0	578215	-1.335	2.872
+		DNA	59.0	28318869	-2.651	207.372
+		Exon	2267.0	35013924	2.307	-1869.517
+		Intron	6701.0	609603944	-0.252	141.911
+		Intergenic	5186.0	773369385	-0.965	1941.370
+		Promoter	13430.0	31483328	5.027	-36668.269
+		5UTR	2248.0	2374057	6.177	-7485.970
+		snoRNA	0.0	19	-0.000	0.000
+		LTR?	0.0	192386	-1.815	2.518
+		scRNA	1.0	576021	-2.914	5.394
+		CpG-Island	2693.0	2981731	6.109	-8859.107
+		Low_complexity	95.0	18457473	-1.346	60.902
+		LTR	131.0	292469782	-4.869	3472.155
+		Simple_repeat	183.0	55203169	-1.981	295.640
+		snRNA	0.0	236385	-2.033	3.093
+		Unknown	3.0	1202308	-2.391	9.064
+		SINE?	0.0	29758	-0.474	0.389
+		Satellite	7.0	3651494	-2.771	29.111
+		rRNA	0.0	165619	-1.663	2.167
+	Counting Tags in Peaks from each directory...
+	Organism: mouse
+	Loading Gene Informaiton...
+	Outputing Annotation File...
+	Done annotating peaks file
+
+
+	Peak file = mouse_only
+	Genome = mm10
+	Organism = mouse
+	Peak/BED file conversion summary:
+		BED/Header formatted lines: 51900
+		peakfile formatted lines: 0
+		Duplicated Peak IDs: 0
+
+	Peak File Statistics:
+		Total Peaks: 51900
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Peak file looks good!
+
+	Reading Positions...
+	-----------------------
+	offset=0
+	Finding Closest TSS...
+	Annotating:....................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	646.0	20931892	0.645	-59.673
+		miRNA	1.0	34262	0.565	-0.711
+		ncRNA	229.0	4421991	1.392	-82.586
+		TTS	1138.0	28468393	1.019	-234.231
+		pseudo	7.0	578215	-0.705	2.131
+		Exon	1701.0	35013924	1.300	-536.734
+		Intron	25737.0	962088562	0.439	-1831.351
+		Intergenic	18620.0	1545159908	-0.711	5497.889
+		Promoter	3381.0	31483328	2.444	-3049.136
+		5UTR	440.0	2374057	3.232	-597.804
+		snoRNA	0.0	19	-0.001	0.000
+		rRNA	0.0	5631	-0.152	0.111
+	NOTE: If this part takes more than 2 minutes, there is a good chance
+		your machine ran out of memory: consider hitting ctrl+C and rerunning
+		the command with "-noann"
+	To capture annotation stats in a file, use "-annStats <filename>" next time
+	Annotating:....................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	646.0	20931892	0.646	-59.781
+		Other	261.0	7145139	0.889	-43.867
+		RC?	0.0	10979	-0.283	0.217
+		RNA	5.0	113962	1.154	-2.555
+		miRNA	1.0	34262	0.566	-0.711
+		ncRNA	229.0	4421991	1.393	-82.651
+		TTS	1138.0	28468393	1.019	-234.497
+		LINE	1412.0	520779584	-2.863	6942.694
+		LINE?	0.0	8168	-0.215	0.161
+		srpRNA	0.0	42953	-0.885	0.847
+		SINE	3882.0	193418762	0.025	-2.044
+		RC	1.0	65629	-0.372	0.464
+		tRNA	37.0	265758	2.820	-43.143
+		DNA?	2.0	142070	-0.486	0.757
+		pseudo	7.0	578215	-0.704	2.129
+		DNA	517.0	28318869	-0.111	3.234
+		Exon	1701.0	35013924	1.301	-537.201
+		Intron	19800.0	609603944	0.720	-2919.515
+		Intergenic	13666.0	773369385	-0.158	122.790
+		Promoter	3380.0	31483328	2.445	-3048.657
+		5UTR	440.0	2374057	3.232	-597.983
+		snoRNA	0.0	19	-0.001	0.000
+		LTR?	4.0	192386	0.076	-0.644
+		scRNA	19.0	576021	0.742	-3.750
+		CpG-Island	819.0	2981731	3.800	-1406.770
+		Low_complexity	99.0	18457473	-1.878	139.676
+		LTR	3420.0	292469782	-0.754	623.168
+		Simple_repeat	369.0	55203169	-1.561	328.963
+		snRNA	6.0	236385	0.364	-1.124
+		Unknown	6.0	1202308	-1.982	11.022
+		SINE?	0.0	29758	-0.666	0.587
+		Satellite	15.0	3651494	-2.263	35.559
+		rRNA	18.0	165619	2.462	-18.172
+	Counting Tags in Peaks from each directory...
+	Organism: mouse
+	Loading Gene Informaiton...
+	Outputing Annotation File...
+	Done annotating peaks file
+
+
+	Peak file = human_only
+	Genome = hg38
+	Organism = human
+	Peak/BED file conversion summary:
+		BED/Header formatted lines: 55205
+		peakfile formatted lines: 0
+		Duplicated Peak IDs: 0
+
+	Peak File Statistics:
+		Total Peaks: 55205
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Peak file looks good!
+
+	Reading Positions...
+	-----------------------
+	offset=0
+	Finding Closest TSS...
+	Annotating:.......................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	739.0	27132416	0.580	-56.091
+		miRNA	5.0	109554	1.324	-2.950
+		ncRNA	311.0	7132742	1.259	-93.843
+		TTS	891.0	32468647	0.591	-69.483
+		pseudo	49.0	2094123	0.361	-2.969
+		Exon	1174.0	37461929	0.782	-150.957
+		Intron	25854.0	1260832437	0.170	-309.492
+		Intergenic	21900.0	1623206414	-0.434	2152.369
+		Promoter	4010.0	36173306	2.605	-3999.244
+		5UTR	272.0	2669935	2.483	-248.753
+		snoRNA	0.0	357	-0.009	0.007
+		scRNA	0.0	97	-0.003	0.002
+		rRNA	0.0	25562	-0.552	0.466
+	NOTE: If this part takes more than 2 minutes, there is a good chance
+		your machine ran out of memory: consider hitting ctrl+C and rerunning
+		the command with "-noann"
+	To capture annotation stats in a file, use "-annStats <filename>" next time
+	Annotating:.......................
+		Annotation	Number of peaks	Total size (bp)	Log2 Ratio (obs/exp)	LogP enrichment (+values depleted)
+		3UTR	739.0	27132416	0.581	-56.229
+		Retroposon	1.0	4043950	-6.203	69.390
+		RC?	1.0	59641	-0.119	0.351
+		RNA	3.0	107756	0.612	-1.161
+		miRNA	5.0	109554	1.325	-2.952
+		ncRNA	311.0	7132742	1.259	-93.944
+		TTS	891.0	32468647	0.591	-69.651
+		LINE	4395.0	626518711	-1.377	3361.656
+		srpRNA	3.0	261424	-0.666	1.204
+		SINE	2926.0	376897074	-1.230	1604.156
+		RC	6.0	358685	-0.123	0.651
+		tRNA	14.0	90990	3.079	-19.661
+		DNA?	9.0	422156	0.227	-1.010
+		pseudo	49.0	2094123	0.361	-2.976
+		DNA	1594.0	98908730	-0.177	15.330
+		Exon	1174.0	37461929	0.783	-151.232
+		Intron	18242.0	657832052	0.606	-1889.582
+		Intergenic	14443.0	738130028	0.103	-51.450
+		Promoter	4010.0	36173306	2.606	-4001.114
+		5UTR	271.0	2669935	2.478	-247.150
+		snoRNA	0.0	357	-0.009	0.007
+		LTR?	19.0	1136894	-0.124	0.895
+		scRNA	1.0	121238	-1.143	1.042
+		CpG-Island	1297.0	8784954	3.019	-1593.295
+		Low_complexity	51.0	5391300	-0.945	15.979
+		LTR	4457.0	257518063	-0.074	8.666
+		Simple_repeat	238.0	33792674	-1.371	155.825
+		snRNA	5.0	311487	-0.182	0.694
+		Unknown	23.0	713558	0.824	-4.881
+		SINE?	0.0	2674	-0.069	0.049
+		Satellite	26.0	74131976	-5.699	1240.192
+		rRNA	1.0	199070	-1.858	2.094
+	Counting Tags in Peaks from each directory...
+	Organism: human
+	Loading Gene Informaiton...
+	Outputing Annotation File...
+	Done annotating peaks file
+
+Annotation check passed: shared_open_mouse
+Annotation check passed: shared_open_human
+Annotation check passed: unique_mouse
+Annotation check passed: unique_human
+Splitting peaks into promoters and enhancers..
+Created shared_mouse_promoter_peaks.bed and shared_mouse_enhancer_peaks.bed
+Created shared_human_promoter_peaks.bed and shared_human_enhancer_peaks.bed
+Created unique_mouse_promoter_peaks.bed and unique_mouse_enhancer_peaks.bed
+Created unique_human_promoter_peaks.bed and unique_human_enhancer_peaks.bed
+Copying peak BED files to output directory for downstream counting..
+cp: cannot create regular file '../../demo//homer/shared_mouse_promoter_peaks.bed': No such file or directory
+cp: cannot create regular file '../../demo//homer/shared_mouse_enhancer_peaks.bed': No such file or directory
+cp: cannot create regular file '../../demo//homer/shared_human_promoter_peaks.bed': No such file or directory
+cp: cannot create regular file '../../demo//homer/shared_human_enhancer_peaks.bed': No such file or directory
+cp: cannot create regular file '../../demo//homer/unique_mouse_promoter_peaks.bed': No such file or directory
+cp: cannot create regular file '../../demo//homer/unique_mouse_enhancer_peaks.bed': No such file or directory
+cp: cannot create regular file '../../demo//homer/unique_human_promoter_peaks.bed': No such file or directory
+cp: cannot create regular file '../../demo//homer/unique_human_enhancer_peaks.bed': No such file or directory
+Running motif enrichment: shared vs unique (with background)..
+
+	Position file = shared_mouse_promoter_peaks.bed
+	Genome = mm10
+	Output Directory = ../../demo//homer/shared_vs_unique_mouse_promoter_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_mouse_promoter_peaks.bed
+	Found mset for "mouse", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/shared_vs_unique_mouse_promoter_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/shared_vs_unique_mouse_promoter_motifs//target.clean..pos"
+
+sh: ../../demo//homer/shared_vs_unique_mouse_promoter_motifs//0.161774680324928.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_mouse_promoter_motifs//0.161774680324928.tmp': No such file or directory
+sh: ../../demo//homer/shared_vs_unique_mouse_promoter_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/shared_vs_unique_mouse_promoter_motifs//0.161774680324928.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_mouse_promoter_motifs//0.161774680324928.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+	Creating single genome FASTA:
+		cat "/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/mm10//"/*.fa > ../../demo//homer/shared_vs_unique_mouse_promoter_motifs//0.161774680324928.genome.fa
+
+sh: ../../demo//homer/shared_vs_unique_mouse_promoter_motifs//0.161774680324928.genome.fa: No such file or directory
+!!! Error. Trouble establishing genome FASTA file: "../../demo//homer/shared_vs_unique_mouse_promoter_motifs//0.161774680324928.genome.fa"
+
+	Position file = shared_human_promoter_peaks.bed
+	Genome = hg38
+	Output Directory = ../../demo//homer/shared_vs_unique_human_promoter_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_human_promoter_peaks.bed
+	Found mset for "human", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/shared_vs_unique_human_promoter_motifs//target.clean..pos"
+
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//0.904691999618993.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_promoter_motifs//0.904691999618993.tmp': No such file or directory
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//0.904691999618993.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_promoter_motifs//0.904691999618993.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//target200.pos: No such file or directory
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//bg200.pos: No such file or directory
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 877.
+
+	Reading genome FASTA file (/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa):
+		Summary of sequences found (first 20):
+			Name	Length
+			chr1	248956422
+			chr10	133797422
+			chr11	135086622
+			chr11_KI270721v1_random	100316
+			chr12	133275309
+			chr13	114364328
+			chr14	107043718
+			chr14_GL000009v2_random	201709
+			chr14_GL000225v1_random	211173
+			chr14_KI270722v1_random	194050
+			chr14_GL000194v1_random	191469
+			chr14_KI270723v1_random	38115
+			chr14_KI270724v1_random	39555
+			chr14_KI270725v1_random	172810
+			chr14_KI270726v1_random	43739
+			chr15	101991189
+			chr15_KI270727v1_random	448248
+			chr16	90338345
+			chr16_KI270728v1_random	1872759
+			chr17	83257441
+		Found 455 sequences (3209286105 total length) in file: /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa
+
+	Reading target genomic positions (../../demo//homer/shared_vs_unique_human_promoter_motifs//target200.pos):
+!!! Error: Could not open file "../../demo//homer/shared_vs_unique_human_promoter_motifs//target200.pos"
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_promoter_motifs//homerBg.group.tsv': No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_promoter_motifs//homerBg.seq.tsv': No such file or directory
+	Normalizing lower order oligos using homer2
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//0.904691999618993.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_promoter_motifs//0.904691999618993.tmp': No such file or directory
+	Finished preparing sequence/group files
+
+	----------------------------------------------------------
+	Known motif enrichment
+mkdir: cannot create directory '../../demo': Permission denied
+mkdir: cannot create directory '../../demo': Permission denied
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//0.666638075231702.motif.2.tmp: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 453.
+Use of uninitialized value in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 478.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $percentTargets in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 150.
+Use of uninitialized value $percentBackground in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 151.
+Use of uninitialized value $percentTargets in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 154.
+Use of uninitialized value $percentBackground in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 155.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 163.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 165.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 166.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 173.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 174.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 176.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 177.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 178.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 179.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 181.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 185.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 186.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 188.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 189.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 193.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 196.
+	Preparing HTML output with sequence logos...
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in exp at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 207.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 209.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 210.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $pvalue in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $percentTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+Use of uninitialized value $percentBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 267.
+	----------------------------------------------------------
+	De novo motif finding (HOMER)
+!!! Could not open ../../demo//homer/shared_vs_unique_human_promoter_motifs//homerMotifs.motifs8 for writing output!!!
+!!! Could not open ../../demo//homer/shared_vs_unique_human_promoter_motifs//homerMotifs.motifs10 for writing output!!!
+!!! Could not open ../../demo//homer/shared_vs_unique_human_promoter_motifs//homerMotifs.motifs12 for writing output!!!
+sh: ../../demo//homer/shared_vs_unique_human_promoter_motifs//homerMotifs.all.motifs: No such file or directory
+Could not open file: "../../demo//homer/shared_vs_unique_human_promoter_motifs//homerMotifs.all.motifs"
+	Job finished - if results look good, please send beer to ..
+
+	Cleaning up tmp files...
+
+
+	Position file = shared_mouse_enhancer_peaks.bed
+	Genome = mm10
+	Output Directory = ../../demo//homer/shared_vs_unique_mouse_enhancer_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_mouse_enhancer_peaks.bed
+	Found mset for "mouse", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//target.clean..pos"
+
+sh: ../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//0.243500819969089.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//0.243500819969089.tmp': No such file or directory
+sh: ../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//0.243500819969089.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//0.243500819969089.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+	Creating single genome FASTA:
+		cat "/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/mm10//"/*.fa > ../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//0.243500819969089.genome.fa
+
+sh: ../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//0.243500819969089.genome.fa: No such file or directory
+!!! Error. Trouble establishing genome FASTA file: "../../demo//homer/shared_vs_unique_mouse_enhancer_motifs//0.243500819969089.genome.fa"
+
+	Position file = shared_human_enhancer_peaks.bed
+	Genome = hg38
+	Output Directory = ../../demo//homer/shared_vs_unique_human_enhancer_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_human_enhancer_peaks.bed
+	Found mset for "human", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/shared_vs_unique_human_enhancer_motifs//target.clean..pos"
+
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//0.19860570256515.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_enhancer_motifs//0.19860570256515.tmp': No such file or directory
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//0.19860570256515.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_enhancer_motifs//0.19860570256515.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//target200.pos: No such file or directory
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//bg200.pos: No such file or directory
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 877.
+
+	Reading genome FASTA file (/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa):
+		Summary of sequences found (first 20):
+			Name	Length
+			chr1	248956422
+			chr10	133797422
+			chr11	135086622
+			chr11_KI270721v1_random	100316
+			chr12	133275309
+			chr13	114364328
+			chr14	107043718
+			chr14_GL000009v2_random	201709
+			chr14_GL000225v1_random	211173
+			chr14_KI270722v1_random	194050
+			chr14_GL000194v1_random	191469
+			chr14_KI270723v1_random	38115
+			chr14_KI270724v1_random	39555
+			chr14_KI270725v1_random	172810
+			chr14_KI270726v1_random	43739
+			chr15	101991189
+			chr15_KI270727v1_random	448248
+			chr16	90338345
+			chr16_KI270728v1_random	1872759
+			chr17	83257441
+		Found 455 sequences (3209286105 total length) in file: /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa
+
+	Reading target genomic positions (../../demo//homer/shared_vs_unique_human_enhancer_motifs//target200.pos):
+!!! Error: Could not open file "../../demo//homer/shared_vs_unique_human_enhancer_motifs//target200.pos"
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_enhancer_motifs//homerBg.group.tsv': No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_enhancer_motifs//homerBg.seq.tsv': No such file or directory
+	Normalizing lower order oligos using homer2
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//0.19860570256515.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/shared_vs_unique_human_enhancer_motifs//0.19860570256515.tmp': No such file or directory
+	Finished preparing sequence/group files
+
+	----------------------------------------------------------
+	Known motif enrichment
+mkdir: cannot create directory '../../demo': Permission denied
+mkdir: cannot create directory '../../demo': Permission denied
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//0.954851938967721.motif.2.tmp: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 453.
+Use of uninitialized value in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 478.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $percentTargets in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 150.
+Use of uninitialized value $percentBackground in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 151.
+Use of uninitialized value $percentTargets in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 154.
+Use of uninitialized value $percentBackground in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 155.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 163.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 165.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 166.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 173.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 174.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 176.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 177.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 178.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 179.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 181.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 185.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 186.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 188.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 189.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 193.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 196.
+	Preparing HTML output with sequence logos...
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in exp at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 207.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 209.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 210.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $pvalue in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $percentTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+Use of uninitialized value $percentBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 267.
+	----------------------------------------------------------
+	De novo motif finding (HOMER)
+!!! Could not open ../../demo//homer/shared_vs_unique_human_enhancer_motifs//homerMotifs.motifs8 for writing output!!!
+!!! Could not open ../../demo//homer/shared_vs_unique_human_enhancer_motifs//homerMotifs.motifs10 for writing output!!!
+!!! Could not open ../../demo//homer/shared_vs_unique_human_enhancer_motifs//homerMotifs.motifs12 for writing output!!!
+sh: ../../demo//homer/shared_vs_unique_human_enhancer_motifs//homerMotifs.all.motifs: No such file or directory
+Could not open file: "../../demo//homer/shared_vs_unique_human_enhancer_motifs//homerMotifs.all.motifs"
+	Job finished - if results look good, please send beer to ..
+
+	Cleaning up tmp files...
+
+Running motif enrichment: unique promoters vs unique enhancers (with background)..
+
+	Position file = unique_mouse_promoter_peaks.bed
+	Genome = mm10
+	Output Directory = ../../demo//homer/unique_mouse_promoter_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_mouse_enhancer_peaks.bed
+	Found mset for "mouse", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/unique_mouse_promoter_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/unique_mouse_promoter_motifs//target.clean..pos"
+
+sh: ../../demo//homer/unique_mouse_promoter_motifs//0.981001909663068.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_mouse_promoter_motifs//0.981001909663068.tmp': No such file or directory
+sh: ../../demo//homer/unique_mouse_promoter_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/unique_mouse_promoter_motifs//0.981001909663068.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_mouse_promoter_motifs//0.981001909663068.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+	Creating single genome FASTA:
+		cat "/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/mm10//"/*.fa > ../../demo//homer/unique_mouse_promoter_motifs//0.981001909663068.genome.fa
+
+sh: ../../demo//homer/unique_mouse_promoter_motifs//0.981001909663068.genome.fa: No such file or directory
+!!! Error. Trouble establishing genome FASTA file: "../../demo//homer/unique_mouse_promoter_motifs//0.981001909663068.genome.fa"
+
+	Position file = unique_mouse_enhancer_peaks.bed
+	Genome = mm10
+	Output Directory = ../../demo//homer/unique_mouse_enhancer_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_mouse_promoter_peaks.bed
+	Found mset for "mouse", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/unique_mouse_enhancer_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/unique_mouse_enhancer_motifs//target.clean..pos"
+
+sh: ../../demo//homer/unique_mouse_enhancer_motifs//0.782678057047637.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_mouse_enhancer_motifs//0.782678057047637.tmp': No such file or directory
+sh: ../../demo//homer/unique_mouse_enhancer_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/unique_mouse_enhancer_motifs//0.782678057047637.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_mouse_enhancer_motifs//0.782678057047637.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+	Creating single genome FASTA:
+		cat "/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/mm10//"/*.fa > ../../demo//homer/unique_mouse_enhancer_motifs//0.782678057047637.genome.fa
+
+sh: ../../demo//homer/unique_mouse_enhancer_motifs//0.782678057047637.genome.fa: No such file or directory
+!!! Error. Trouble establishing genome FASTA file: "../../demo//homer/unique_mouse_enhancer_motifs//0.782678057047637.genome.fa"
+
+	Position file = unique_human_promoter_peaks.bed
+	Genome = hg38
+	Output Directory = ../../demo//homer/unique_human_promoter_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_human_enhancer_peaks.bed
+	Found mset for "human", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/unique_human_promoter_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/unique_human_promoter_motifs//target.clean..pos"
+
+sh: ../../demo//homer/unique_human_promoter_motifs//0.778497501815767.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_promoter_motifs//0.778497501815767.tmp': No such file or directory
+sh: ../../demo//homer/unique_human_promoter_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/unique_human_promoter_motifs//0.778497501815767.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_promoter_motifs//0.778497501815767.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+sh: ../../demo//homer/unique_human_promoter_motifs//target200.pos: No such file or directory
+sh: ../../demo//homer/unique_human_promoter_motifs//bg200.pos: No such file or directory
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 877.
+
+	Reading genome FASTA file (/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa):
+		Summary of sequences found (first 20):
+			Name	Length
+			chr1	248956422
+			chr10	133797422
+			chr11	135086622
+			chr11_KI270721v1_random	100316
+			chr12	133275309
+			chr13	114364328
+			chr14	107043718
+			chr14_GL000009v2_random	201709
+			chr14_GL000225v1_random	211173
+			chr14_KI270722v1_random	194050
+			chr14_GL000194v1_random	191469
+			chr14_KI270723v1_random	38115
+			chr14_KI270724v1_random	39555
+			chr14_KI270725v1_random	172810
+			chr14_KI270726v1_random	43739
+			chr15	101991189
+			chr15_KI270727v1_random	448248
+			chr16	90338345
+			chr16_KI270728v1_random	1872759
+			chr17	83257441
+		Found 455 sequences (3209286105 total length) in file: /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa
+
+	Reading target genomic positions (../../demo//homer/unique_human_promoter_motifs//target200.pos):
+!!! Error: Could not open file "../../demo//homer/unique_human_promoter_motifs//target200.pos"
+mv: cannot stat '../../demo//homer/unique_human_promoter_motifs//homerBg.group.tsv': No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_promoter_motifs//homerBg.seq.tsv': No such file or directory
+	Normalizing lower order oligos using homer2
+sh: ../../demo//homer/unique_human_promoter_motifs//0.778497501815767.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_promoter_motifs//0.778497501815767.tmp': No such file or directory
+	Finished preparing sequence/group files
+
+	----------------------------------------------------------
+	Known motif enrichment
+mkdir: cannot create directory '../../demo': Permission denied
+mkdir: cannot create directory '../../demo': Permission denied
+sh: ../../demo//homer/unique_human_promoter_motifs//0.759502495962323.motif.2.tmp: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 453.
+Use of uninitialized value in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 478.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $percentTargets in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 150.
+Use of uninitialized value $percentBackground in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 151.
+Use of uninitialized value $percentTargets in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 154.
+Use of uninitialized value $percentBackground in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 155.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 163.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 165.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 166.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 173.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 174.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 176.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 177.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 178.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 179.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 181.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 185.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 186.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 188.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 189.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 193.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 196.
+	Preparing HTML output with sequence logos...
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in exp at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 207.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 209.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 210.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $pvalue in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $percentTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+Use of uninitialized value $percentBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 267.
+	----------------------------------------------------------
+	De novo motif finding (HOMER)
+!!! Could not open ../../demo//homer/unique_human_promoter_motifs//homerMotifs.motifs8 for writing output!!!
+!!! Could not open ../../demo//homer/unique_human_promoter_motifs//homerMotifs.motifs10 for writing output!!!
+!!! Could not open ../../demo//homer/unique_human_promoter_motifs//homerMotifs.motifs12 for writing output!!!
+sh: ../../demo//homer/unique_human_promoter_motifs//homerMotifs.all.motifs: No such file or directory
+Could not open file: "../../demo//homer/unique_human_promoter_motifs//homerMotifs.all.motifs"
+	Job finished - if results look good, please send beer to ..
+
+	Cleaning up tmp files...
+
+
+	Position file = unique_human_enhancer_peaks.bed
+	Genome = hg38
+	Output Directory = ../../demo//homer/unique_human_enhancer_motifs/
+	Fragment size set to 200
+	Will use repeat masked sequences
+	background position file: unique_human_promoter_peaks.bed
+	Found mset for "human", will check against vertebrates motifs
+mkdir: cannot create directory '../../demo': Permission denied
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 557.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 559.
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 561.
+sh: ../../demo//homer/unique_human_enhancer_motifs//target.clean..pos: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/checkPeakFile.pl line 21.
+
+	Peak File Statistics:
+		Total Peaks: 0
+		Redundant Peak IDs: 0
+		Peaks lacking information: 0 (need at least 5 columns per peak)
+		Peaks with misformatted coordinates: 0 (should be integer)
+		Peaks with misformatted strand: 0 (should be either +/- or 0/1)
+
+	Only 0 peaks found! If many more expected, maybe the file format is for Macs only
+	Try running the command: changeNewLine.pl "../../demo//homer/unique_human_enhancer_motifs//target.clean..pos"
+
+sh: ../../demo//homer/unique_human_enhancer_motifs//0.833618436780856.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_enhancer_motifs//0.833618436780856.tmp': No such file or directory
+sh: ../../demo//homer/unique_human_enhancer_motifs//bg.clean.pos: No such file or directory
+sh: ../../demo//homer/unique_human_enhancer_motifs//0.833618436780856.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_enhancer_motifs//0.833618436780856.tmp': No such file or directory
+	Using updated background selection (v5.0+)
+sh: ../../demo//homer/unique_human_enhancer_motifs//target200.pos: No such file or directory
+sh: ../../demo//homer/unique_human_enhancer_motifs//bg200.pos: No such file or directory
+print() on closed filehandle INFO at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findMotifsGenome.pl line 877.
+
+	Reading genome FASTA file (/ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa):
+		Summary of sequences found (first 20):
+			Name	Length
+			chr1	248956422
+			chr10	133797422
+			chr11	135086622
+			chr11_KI270721v1_random	100316
+			chr12	133275309
+			chr13	114364328
+			chr14	107043718
+			chr14_GL000009v2_random	201709
+			chr14_GL000225v1_random	211173
+			chr14_KI270722v1_random	194050
+			chr14_GL000194v1_random	191469
+			chr14_KI270723v1_random	38115
+			chr14_KI270724v1_random	39555
+			chr14_KI270725v1_random	172810
+			chr14_KI270726v1_random	43739
+			chr15	101991189
+			chr15_KI270727v1_random	448248
+			chr16	90338345
+			chr16_KI270728v1_random	1872759
+			chr17	83257441
+		Found 455 sequences (3209286105 total length) in file: /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/share/homer/.//data/genomes/hg38///genome.fa
+
+	Reading target genomic positions (../../demo//homer/unique_human_enhancer_motifs//target200.pos):
+!!! Error: Could not open file "../../demo//homer/unique_human_enhancer_motifs//target200.pos"
+mv: cannot stat '../../demo//homer/unique_human_enhancer_motifs//homerBg.group.tsv': No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_enhancer_motifs//homerBg.seq.tsv': No such file or directory
+	Normalizing lower order oligos using homer2
+sh: ../../demo//homer/unique_human_enhancer_motifs//0.833618436780856.tmp: No such file or directory
+mv: cannot stat '../../demo//homer/unique_human_enhancer_motifs//0.833618436780856.tmp': No such file or directory
+	Finished preparing sequence/group files
+
+	----------------------------------------------------------
+	Known motif enrichment
+mkdir: cannot create directory '../../demo': Permission denied
+mkdir: cannot create directory '../../demo': Permission denied
+sh: ../../demo//homer/unique_human_enhancer_motifs//0.514284315842332.motif.2.tmp: No such file or directory
+readline() on closed filehandle IN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 453.
+Use of uninitialized value in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 478.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $percentTargets in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 150.
+Use of uninitialized value $percentBackground in substitution (s///) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 151.
+Use of uninitialized value $percentTargets in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 154.
+Use of uninitialized value $percentBackground in numeric gt (>) at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 155.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 163.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 165.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 166.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 173.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 174.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 176.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 177.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 178.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 179.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 181.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 185.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 186.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 188.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 189.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 193.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 196.
+	Preparing HTML output with sequence logos...
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 204.
+Use of uninitialized value in exp at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 207.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 209.
+Use of uninitialized value in sprintf at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 210.
+Use of uninitialized value $str in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 276.
+Use of uninitialized value $str[0] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 277.
+Use of uninitialized value $str[1] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 280.
+Use of uninitialized value $str[2] in split at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 283.
+Use of uninitialized value $pvalue in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $percentTargets in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 215.
+Use of uninitialized value $numBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+Use of uninitialized value $percentBackground in concatenation (.) or string at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle TXT at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 216.
+print() on closed filehandle MAIN at /ocean/projects/bio230007p/sturecki/project/conda_envs/homer_env/bin/findKnownMotifs.pl line 267.
+	----------------------------------------------------------
+	De novo motif finding (HOMER)
+!!! Could not open ../../demo//homer/unique_human_enhancer_motifs//homerMotifs.motifs8 for writing output!!!
+!!! Could not open ../../demo//homer/unique_human_enhancer_motifs//homerMotifs.motifs10 for writing output!!!
+!!! Could not open ../../demo//homer/unique_human_enhancer_motifs//homerMotifs.motifs12 for writing output!!!
+sh: ../../demo//homer/unique_human_enhancer_motifs//homerMotifs.all.motifs: No such file or directory
+Could not open file: "../../demo//homer/unique_human_enhancer_motifs//homerMotifs.all.motifs"
+	Job finished - if results look good, please send beer to ..
+
+	Cleaning up tmp files...
+
+HOMER done! Results in ../../demo//homer
+ERROR: HOMER motif result files (steps 4/5 - enhancer/promoter and motif analysis output) in ../../demo//homer/
+  missing or empty: ../../demo//homer/shared_vs_unique_human_enhancer_motifs/knownResults.txt
+  if skipping a step, make sure its output files
+  are in the correct folder. see README for details.
